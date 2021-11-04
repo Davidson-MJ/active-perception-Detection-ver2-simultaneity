@@ -46,7 +46,7 @@ public class recordData : MonoBehaviour
         runExperiment = GetComponent<runExperiment>();
         viveInput = GetComponent<ViveInput>();
         trialParameters  = GetComponent<trialParameters>();
-        targetAppearance = GetComponent<targetAppearance>();
+        targetAppearance = GameObject.Find("SphereShader").GetComponent<targetAppearance>(); 
         // create text file for Position tracking data.
         createPositionTextfile(); // below for details.
 
@@ -147,7 +147,8 @@ public class recordData : MonoBehaviour
 
     private void createPositionTextfile()
     {
-        outputFolder = "C:/Users/vrlab/Documents/Matt/Projects/Output/walking_Ver1_Detect/";
+        //outputFolder = "C:/Users/vrlab/Documents/Matt/Projects/Output/walking_Ver1_Detect/";
+        outputFolder = "C:/Users/User/Documents/matt/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data/";
         outputFile_pos = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd") + "_framebyframe.csv";
 
         string columnNames = "date," +
@@ -188,7 +189,8 @@ public class recordData : MonoBehaviour
     }
     private void createSummaryTextfile()
     {
-        outputFolder = "C:/Users/vrlab/Documents/Matt/Projects/Output/walking_Ver1_Detect/";
+        outputFolder = "C:/Users/User/Documents/matt/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data/";
+
         outputFile_summary = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd") + "_trialsummary.csv";
 
         string columnNames = "date," +
@@ -200,7 +202,7 @@ public class recordData : MonoBehaviour
             "targFlash," +
             "targRT," +
             "targCor," +
-            "targContrast," +
+            "targGap," +
             "FA_rt," +
             ","+
             "\r\n";
@@ -226,8 +228,8 @@ public class recordData : MonoBehaviour
         float targOnset = trialParameters.targOnsetTimeList[last - 1]; // subtract 1 to adjust for indexing starting at 0 ("Count" is the length)
         float targRT = trialParameters.targResponseTimeList[last - 1];
         float targCorr = trialParameters.targCorrectList[last - 1];
-        float targContrast = trialParameters.targGapDuration[last - 1];
-
+        float targGap = trialParameters.targGapDuration[last - 1];
+        int oneorTwo = targetAppearance.OneorTwoFlashes;
         float[] FA_rts = runExperiment.FA_withintrial.ToArray();
         string strfts = "";
         if (FA_rts.Length > 0)
@@ -247,10 +249,10 @@ public class recordData : MonoBehaviour
                   runExperiment.TrialCount + "," +
                   nTarg + "," +
                   targOnset + "," +
-                  targetAppearance.OneorTwoFlashes + "," +
+                  oneorTwo + "," +
                   targRT + "," +
                   targCorr + "," +
-                  targContrast +","+
+                  targGap +","+
                   strfts;
 
             outputData_summary.Add(data);

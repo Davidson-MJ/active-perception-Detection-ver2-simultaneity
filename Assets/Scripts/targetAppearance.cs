@@ -13,6 +13,7 @@ public class targetAppearance : MonoBehaviour
     public bool processNoResponse;
     private float waitTime;
     public int OneorTwoFlashes;
+
     runExperiment runExperiment;
     Renderer rend;
     trialParameters trialParams;
