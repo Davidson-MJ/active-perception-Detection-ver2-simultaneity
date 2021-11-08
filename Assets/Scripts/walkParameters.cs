@@ -50,11 +50,11 @@ public class walkParameters : MonoBehaviour
     {
         //rw params:
         //trialDuration = 120f;
-        reachHeight = 1.4f;
+        reachHeight = 1.3f;
        
        // walkingSpeed = 0.7f; 
-        walkDuration = 4f;// 
-        walkingPathDistance = 2.8f;//  Determines end point. 
+        walkDuration = 8f;// 
+        walkingPathDistance = 7.5f;//  Determines end point. 
         //approx steps is dist / 0.5
 
         rampDistance = 0f;// 0.7f; // used in walkingGuide, added to total path distance above.

@@ -9,7 +9,7 @@ public class trialParameters : MonoBehaviour
     // within trial data params and storage [ move to scriptable object?]
 
     public float preTrialsec = 0.5f; // buffer for no targ onset. (1 step)
-    public float responseWindow = 0.6f; // this is the response window to record detection (after target onset).
+    public float responseWindow = 1.5f; // this is the response window to record detection (after target onset).
     public float targDurationsec = 0.02f; // 20 ms
     public float minITI; //response window + targDursec
 
@@ -26,12 +26,14 @@ public class trialParameters : MonoBehaviour
     //public float[] targ3rangelims = { 3f, 3.6f };
     //public float[] targ4rangelims = { 4.2f, 4.4f }; // short window at end with enough time for response.
     public float[] targRange;
+    private int[] targsPresented; // 0,4,or 8 for the A19 walk space, set per trial.
+
 
     // TODO: autogenerate pseudo random targ intervals based on the walkDuration. With minimum spacing between targs as responseWindow+small jitter.
 
 
     // import other settings:
-   walkParameters walkParameters;
+    walkParameters walkParameters;
    runExperiment runExperiment;
 
     // create public lists of for accessing in runExperiment. TODO: Must be an easier way to store different types - like a dict or struct?
@@ -60,7 +62,7 @@ public class trialParameters : MonoBehaviour
         // gather presets
         trialDur = walkParameters.walkDuration; // in second, determines how many targets we can fit in.
 
-        minITI = responseWindow + targDurationsec + .1f; //be conservative with ntargs, since gap might be large (starts at .07s)
+        minITI = responseWindow + 2*targDurationsec+  .15f; //be conservative with ntargs, since gap might be large (starts at .07s)
 
         float availTime = trialDur - (preTrialsec + responseWindow); // when can targets appear in walk?
         float nTargPres = Mathf.Floor(availTime / minITI); // how many targs in this window
@@ -82,7 +84,8 @@ public class trialParameters : MonoBehaviour
         int icounter = 0;
         // just fit the max in:
         trialsper.Add(trialsperCondition); // 10 % catch trials
-        trialsper.Add(trialsperCondition * 9); //max target case
+        trialsper.Add(trialsperCondition * 2); //4 target case
+        trialsper.Add(trialsperCondition * 7); //max target case
        
 
 
@@ -91,11 +94,17 @@ public class trialParameters : MonoBehaviour
         targRange[1] = trialDur - responseWindow - 0.3f; // max onset time, w/ extra buffer for late targets to be detected.
 
         // prefill array:
-        for (int icond= 0; icond < nUniqueConditions; icond++)
+        targsPresented = new int[3];
+        targsPresented[0] = 0;
+        targsPresented[1] = 4;
+        targsPresented[2] = 6;
+
+        // prefill array:
+        for (int icond= 0; icond <3; icond++)
         {
             for (int itrial = 0; itrial < trialsper[icond]; itrial++)
             {
-                trialTypeArray[icounter] = icond;
+                trialTypeArray[icounter] = targsPresented[icond];
                 icounter++;
             }
 

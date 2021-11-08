@@ -49,7 +49,7 @@ public class Staircase : MonoBehaviour
         //nCorrReverse = 2; // 2 down 1 up approximates 74% cor (1/2)^(1/3)
         nErrReverse = 1;
         PercentDetect = 0f;
-        targetAlpha = .75f;
+        targetAlpha = .8f;
         // set colours
          preTrialColor= new Color(0f, 0.5f, 0f, targetAlpha); //drk green
          probeColor = new Color(0.4f, 0.4f, 0.4f, targetAlpha); // dark grey

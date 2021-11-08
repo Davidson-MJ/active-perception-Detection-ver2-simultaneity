@@ -77,7 +77,7 @@ public class runExperiment : MonoBehaviour
 
         // params, storage
         // make sure nAllTrials is divisible by 10.
-        nStaircaseTrials = 40;
+        nStaircaseTrials = 20;
         nTrials = 150;
         nAllTrials = nStaircaseTrials + nTrials;
        
@@ -146,7 +146,7 @@ public class runExperiment : MonoBehaviour
         }
      
         // check for target detection.(indicated by  L/R trigger click).
-        if (trialinProgress && viveInput.clickRight)
+        if (trialinProgress && viveInput.clickState)
         {
             collectDetect(); // places RTs within an array. [ function will determine correct or no]
            
