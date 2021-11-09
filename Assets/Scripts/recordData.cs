@@ -92,7 +92,7 @@ public class recordData : MonoBehaviour
             for (int j = 0; j < timePointPosition.Length; j++)
             {
                 string data =
-                    System.DateTime.Now.ToString("yyyy-MM-dd") + "," +
+                    System.DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "," +
                     runExperiment.participant + "," +
                     runExperiment.TrialCount + "," +
                     trialTime + "," +
@@ -149,7 +149,7 @@ public class recordData : MonoBehaviour
     {
         //outputFolder = "C:/Users/vrlab/Documents/Matt/Projects/Output/walking_Ver1_Detect/";
         outputFolder = "C:/Users/User/Documents/matt/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data/";
-        outputFile_pos = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd") + "_framebyframe.csv";
+        outputFile_pos = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "_framebyframe.csv";
 
         string columnNames = "date," +
             // add experiment: walkingTracking2D
@@ -191,7 +191,7 @@ public class recordData : MonoBehaviour
     {
         outputFolder = "C:/Users/User/Documents/matt/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data/";
 
-        outputFile_summary = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd") + "_trialsummary.csv";
+        outputFile_summary = outputFolder + runExperiment.participant +"_" + System.DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "_trialsummary.csv";
 
         string columnNames = "date," +
             // add experiment: walkingTracking2D

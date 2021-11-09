@@ -84,22 +84,22 @@ public class targetAppearance : MonoBehaviour
 
 
             }
-            else if (runExperiment.TrialType == 6) // increased spacing between targs
+            else if (runExperiment.TrialType == 5) // increased spacing between targs
             {
                 //restricted range to ensure spacing.
                 // need to leave room for 3 targ and response after the first.
                 preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - 8 * (trialParams.minITI + jitter));
                 // next target 2/4:
-                preTargISI[1] = Random.Range(preTargISI[0] + trialParams.minITI, trialParams.targRange[1] - 6 * (trialParams.minITI + jitter));
                 // targ 3/4
-                preTargISI[2] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 4 * (trialParams.minITI + jitter));
+                preTargISI[1] = Random.Range(preTargISI[0] + trialParams.minITI, trialParams.targRange[1] - 7 * (trialParams.minITI + jitter));
 
-                preTargISI[3] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 3 * (trialParams.minITI + jitter));
+                preTargISI[2] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 5 * (trialParams.minITI + jitter));
 
-                preTargISI[4] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] -  (trialParams.minITI + jitter));
+                preTargISI[3] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1] -  3*(trialParams.minITI + jitter));
                
-                preTargISI[5] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1]);
+                preTargISI[4] = Random.Range(preTargISI[3] + trialParams.minITI, trialParams.targRange[1]);
             }
+               
             else if (runExperiment.TrialType == 4) // increased spacing between targs
             {
                 //restricted range to ensure spacing.
@@ -112,30 +112,7 @@ public class targetAppearance : MonoBehaviour
 
                 preTargISI[3] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1]);
             }
-            else if (runExperiment.TrialType == 3)
-            {
-                //restricted range to ensure spacing.
-               // need to leave room for 2 targ and response after the first.
-               preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - (2*trialParams.minITI + 2*jitter));
-                // next target after time has elapsed to respond to first:
-               preTargISI[1] = Random.Range(preTargISI[0]+trialParams.minITI, trialParams.targRange[1] - (trialParams.minITI + jitter));
-                // remaining window:
-               preTargISI[2] = Random.Range(preTargISI[1]+trialParams.minITI, trialParams.targRange[1]);
-
-            }
-            else if (runExperiment.TrialType == 2) // place 2 targets in trial, separated by min spacing.
-            {
-                //first targ just needs to leave enough room for the second (after a response)
-                preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1]-(trialParams.minITI+jitter));
-                // second can come anywhere after the first.
-                preTargISI[1] = Random.Range(preTargISI[0]+trialParams.minITI, trialParams.targRange[1]);
-
-            }
-            else if (runExperiment.TrialType == 1) // use full range of trial to decrease predictability.
-            {
-                preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1]);
-
-            }
+            
             else if (runExperiment.TrialType == 0) // no targets
             {
                 trialParams.targOnsetTimeList.Add(-1); // place holder so that the onset, response, and corr, lists remain the same length.

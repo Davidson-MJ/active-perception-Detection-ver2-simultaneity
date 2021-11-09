@@ -77,8 +77,8 @@ public class runExperiment : MonoBehaviour
 
         // params, storage
         // make sure nAllTrials is divisible by 10.
-        nStaircaseTrials = 20;
-        nTrials = 150;
+        nStaircaseTrials = 40;
+        nTrials = 160;
         nAllTrials = nStaircaseTrials + nTrials;
        
 
@@ -137,6 +137,12 @@ public class runExperiment : MonoBehaviour
             changeMat.update(usematerial);  //show green arrow material.
         }
 
+        if (!SetUpSession && trialTime == 0 && !trialinProgress)
+        {
+
+            showText.updateText(3); // Trial count.
+
+        }
 
         // increment within trial time.
         if (trialinProgress)

@@ -84,8 +84,8 @@ public class trialParameters : MonoBehaviour
         int icounter = 0;
         // just fit the max in:
         trialsper.Add(trialsperCondition); // 10 % catch trials
-        trialsper.Add(trialsperCondition * 2); //4 target case
-        trialsper.Add(trialsperCondition * 7); //max target case
+        trialsper.Add(trialsperCondition * 4); //4 target case
+        trialsper.Add(trialsperCondition * 5); //max target case
        
 
 
@@ -97,7 +97,7 @@ public class trialParameters : MonoBehaviour
         targsPresented = new int[3];
         targsPresented[0] = 0;
         targsPresented[1] = 4;
-        targsPresented[2] = 6;
+        targsPresented[2] = 5;
 
         // prefill array:
         for (int icond= 0; icond <3; icond++)

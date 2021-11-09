@@ -42,7 +42,7 @@ public class showText : MonoBehaviour
 
         else if (text2show == 3)
         {
-            thestring = "Pull the <left> trigger to begin Trial " + runExperiment.TrialCount + 1 + " / " + runExperiment.nAllTrials; ; // blank
+            thestring = "Pull the <left> trigger to begin Trial " + (runExperiment.TrialCount + 1) + " / " + runExperiment.nAllTrials; ; // blank
         }
         thestring.Replace("\\n", "\n");
         thestring.Replace("\\n", "\n");

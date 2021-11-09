@@ -8,7 +8,7 @@ cd([datadir filesep 'ProcessedData'])
 
 pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
-nPrac=41;
+nPrac=21;
 %%
 clf;
 for ippant=1:length(pfols)
