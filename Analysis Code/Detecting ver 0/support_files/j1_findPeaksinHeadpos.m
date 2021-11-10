@@ -7,13 +7,13 @@ cd([datadir filesep 'ProcessedData'])
 Fs=90;
 pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
-Timevec = [1:size(Head_posmatrix,3)] .* 1/Fs;
 
-nPractrials=40;
+
+nPractrials=[20,40]; %?
 %%
 % threshold between peaks for detection
 pkdist = Fs/2.5; % 400ms.
-participantstepwidths= [15,15, 8]; %samples, May need to toggle per ppant.
+% participantstepwidths= [15,15, 8]; %samples, May need to toggle per ppant.
 pkheight = 0.0002; % (m)
 
 figure(1); clf;
@@ -22,7 +22,7 @@ set(gcf, 'units', 'normalized', 'position', [0,0, .9, .9], 'color', 'w', 'visibl
 for ippant = 1:nsubs
     cd([datadir filesep 'ProcessedData'])
    
-    pkdist = participantstepwidths(ippant);
+%     pkdist = participantstepwidths(ippant);
     %%load data from import job.
     load(pfols(ippant).name);
     savename = pfols(ippant).name;
@@ -37,11 +37,14 @@ for ippant = 1:nsubs
     for  itrial=1:size(HeadPos,2)
         
         %trial data:
-        trialD_sm = smooth(squeeze(Head_posmatrix(2,itrial,:))', 5); % small smoothing factor.
-        trialD = squeeze(Head_posmatrix(2,itrial,:))';
-            
-            
-        if itrial < nPractrials+1
+        trialtmp = HeadPos(itrial).Y;
+        trialD_sm = smooth(trialtmp, 5); % small smoothing factor.
+        trialD = squeeze(trialtmp);
+        trialTarg = TargState(itrial).state;
+        trialClick = clickState(itrial).state;
+         
+        Timevec = HeadPos(itrial).times;
+        if itrial <= nPractrials(ippant)
             % print pos data, no peak detection:
             
             figure(1);
@@ -57,9 +60,17 @@ for ippant = 1:nsubs
             subplot(5,3,pcount);
             plot(Timevec, trialD);
             hold on;
+            
             ylabel('Head position');
             xlabel('Time (s)');
             title(['Trial ' num2str(itrial) ' (calibration)']);
+            % add targ and response info:
+            
+            yyaxis right
+            plot(Timevec, trialTarg, 'k');
+            plot(Timevec, trialClick, 'r');
+            ylabel('targ-click');
+           
             axis tight
             pcount=pcount+1;
         else
@@ -210,6 +221,13 @@ for ippant = 1:nsubs
             ylabel('Head position');
             xlabel('Time (s)');
             title(['Trial ' num2str(itrial)]);
+            
+               
+            yyaxis right
+            plot(Timevec, trialTarg, 'k');
+            plot(Timevec, trialClick, 'r');
+            ylabel('targ-click');
+            
             axis tight
             pcount=pcount+1;
             

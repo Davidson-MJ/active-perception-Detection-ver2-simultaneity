@@ -5,15 +5,13 @@
 
 % First take: resample time vector of each gait to 100 points, for alignment across
 % gaits.
-
-
-% clear all; close all;
-datadir = 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
-cd([datadir filesep 'ProcessedData'])
+cd([datadir filesep 'ProcessedData']);
 pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
-nPrac=41; % 40 practice trials.
-%%
+
+
+nPractrials=[20,40]; %?
+%%%%
 for ippant = 1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name);
@@ -24,6 +22,7 @@ for ippant = 1:nsubs
     % Per trial, extract gait samples (trough to trough), normalize along x
     % axis, and store various metrics.
     
+    nPrac = nPractrials(ippant)+1;
     Data_perTrialpergait =[];
     % adjust summary data, to make sure it matches
    summaryInfoIDs = [trial_TargetSummary(:).trialID]+1; % unity @ 0
@@ -38,14 +37,23 @@ for ippant = 1:nsubs
         % plot gaits overlayed;
         nSteps = length(pks) -2;
         % Head position data:
-        tmpPos=  squeeze(Head_posmatrix(2,itrial,:));
+        tmpPos=  squeeze(HeadPos(itrial).Y);
         % targ onset and click (RT) data:
-        tmpTarg = squeeze(TargClickmatrix(1,itrial,:))';
-        tmpClick = squeeze(TargClickmatrix(2,itrial,:))';
+        tmpTarg = squeeze(TargState(itrial).state);
+        tmpClick = squeeze(clickState(itrial).state);
         
+      % what trial type?
+       targsPresented = max(tmpTarg);
         %preAllocate for easy storage
         gaitD=[]; %struct
         [gaitHeadY, gaitTarg]= deal(zeros(length(pks), 100)); % we will normalize the vector lengths.
+        
+        %summary info for comparison:
+        tOns_sumry= trial_TargetSummary(itrial).targOnsets;
+        tTypes_sumry= trial_TargetSummary(itrial).targTypes;
+        tCor_sumry = trial_TargetSummary(itrial).targRespCorrect;
+        tClickOns_smry= trial_TargetSummary(itrial).clickOnsets;
+        tRTs_sumry = trial_TargetSummary(itrial).targRTs;
         
         for igait=1:length(pks)
             gaitsamps =[trs(igait):trs(igait+1)];
@@ -71,24 +79,47 @@ for ippant = 1:nsubs
                gPcnt = round(tO/length(gaitsamps)*100);
                gaitTargtmp(gPcnt)=1; %store in resized vector.
               
-               % find how long until next RT, if within response bounds.
-               
+               % find how long until next RT, if within response bounds.               
                tOns = gaitsamps(tO);
                time_Onset = avTime(itrial, tOns);
-               clickAt = find(tmpClick(tOns:end) > 0);
-               % RT = clickAt - tOns;
-               if~isempty(clickAt)
-                   wasDetected=1;
-                   time_Response = avTime(itrial,tOns+clickAt);
-                   tRT = time_Response- time_Onset;
-               else
-                   wasDetected=0;
-                   time_Response=nan;
-                   tRT=nan;
+               
+               %using summary data:
+               targIDX_insummary = dsearchn([tOns_sumry], [time_Onset]');
+               targTypewas = tTypes_sumry(targIDX_insummary);
+               clickAt = tClickOns_smry(targIDX_insummary);
+               time_Response = tRTs_sumry(targIDX_insummary);
+               respWasCorrect = tCor_sumry(targIDX_insummary);
+              
+               %also dummy classiy
+               %  1= 1flash correct)
+               %  2 = 2flash correct
+               %  3 = 1flash incorrect
+               %  4 = 2flash incorrect
+               %  0 = no resp
+               if ~isnan(respWasCorrect)
+                   if respWasCorrect
+                       targRespClass = targTypewas;
+                   else 
+                       targRespClass = targTypewas+2;
+                   end
+               else 
+                   targRespClass= 0;
                end
+               %store
                
-            end 
                
+               gaitD(igait).tOnset_inTrialidnx = tOns;
+               gaitD(igait).tOnset_inGait = tO;
+               gaitD(igait).tOnset_inGaitResampled = gPcnt;
+               gaitD(igait).tType= targTypewas;
+               gaitD(igait).tRT = time_Response;
+               gaitD(igait).tRespCorr = respWasCorrect;
+               gaitD(igait).tRespClass = targRespClass;
+               
+            else 
+                % useful for aligning response classes to correct gaits (below)
+                gaitD(igait).tRespClass= nan; 
+            end
                % store data in matrix for easy handling:
             gaitHeadY(igait,:) = imresize(gaitDtmp_n', [1,100]);
             gaitTarg(igait,:) = gaitTargtmp;
@@ -98,11 +129,7 @@ for ippant = 1:nsubs
             gaitD(igait).Head_Ynorm = gaitDtmp_n;
             gaitD(igait).Head_Y_resampled = imresize(gaitDtmp_n', [1,100]);
             gaitD(igait).gaitsamps = gaitsamps;
-            gaitD(igait).tOnset_inTrialidnx = tOns;
-            gaitD(igait).tOnset_inGait = tO;
-            gaitD(igait).tOnset_inGaitResampled = gPcnt;
-            gaitD(igait).wasDetected = wasDetected;
-            gaitD(igait).tRT = tRT;
+           
             
             % other cycle info:
             %height
@@ -121,76 +148,84 @@ for ippant = 1:nsubs
             gaitD(igait).fallspeed = fallspeed;
             
             
-            %compute prominence? height from peak to interp line between troughs?
             
         end % gait in trial.
-        Data_perTrialpergait(itrial).gaitTarg = gaitTarg;
-        Data_perTrialpergait(itrial).gaitHeadY= gaitHeadY;
-        Data_perTrialpergait(itrial).gaitTargs_detected = [gaitD(:).wasDetected];
-        
+        trial_TargetSummary(itrial).gaitTarg = gaitTarg;
+        trial_TargetSummary(itrial).gaitHeadY= gaitHeadY;
+       
+        if targsPresented
+        trial_TargetSummary(itrial).gaitTargs_detected = [gaitD(:).tRespClass];
+        end
         % save this gait info per trial in structure as well.
         HeadPos(itrial).gaitData = gaitD;
+        trial_TargetSummary(itrial).gaitData = gaitD;
         
     end %trial
     
-    %% for all trials, compute the head pos per time point, and stacked Hits vs Misses.
+    %% for all trials, compute the head pos per time point, and stacked targ Response class,
+    % 0, 1, 2, 3, 4  = no resp, correct 1, 2, and incorrect 1 ,2 flashes.
     ntrials = length([nPrac:size(HeadPos,2)]);
-    [PFX_headY, PFX_tOnsets, PFX_tHits, PFX_tMiss]= deal(zeros(ntrials,100));
+    [PFX_headY, PFX_tOnsets, PFX_tHits_1flash, ...
+        PFX_tHits_2flash, PFX_tMiss_1flash, ...
+        PFX_tMiss_2flash, PFX_tNoresp]= deal(zeros(ntrials,100));
     
-    stepCount=1;
-    Hit_count=1;
-    Miss_count=1;
-    for itrial= nPrac:size(Data_perTrialpergait,2)
+    [h1count, h2count, m1count, m2count, norespcount]=deal(1);
+   
+    for itrial= nPrac:size(trial_TargetSummary,2)
         
-        % omit first and last gaitcycle from each trial
-        TrialD= Data_perTrialpergait(itrial).gaitTarg([2:(end-1)],:);
-        TrialY= Data_perTrialpergait(itrial).gaitHeadY([2:(end-1)],:);
+       tmp=trial_TargetSummary(itrial).gaitTarg; % nGaits
+       nGaits = size(tmp,1);
+       allgaits = 1:nGaits;
+       % omit first and last gaitcycles from each trial
+       usegaits = allgaits;%(3:(end-2));
+        
+       %data of interest is the resampled gait (1:100) with a position of
+       %the targ (now classified as correct or no).
+        TrialD= trial_TargetSummary(itrial).gaitTarg(usegaits,:); 
+        TrialY= trial_TargetSummary(itrial).gaitHeadY(usegaits,:);
         
         PFX_tOnsets(itrial,:) = sum(TrialD,1);
         PFX_headY(itrial,:)= mean(TrialY,1);
         
-        % also sort into H and misses:
-         trialDetected = Data_perTrialpergait(itrial).gaitTargs_detected([2:(end-1)]);
-        for it=1:size(TrialD,1)
-            if trialDetected(it)==1
-               PFX_tHits(Hit_count,:) = TrialD(it,:);
-               Hit_count=Hit_count+1;
-            elseif trialDetected(it)==0
-                  PFX_tMiss(Miss_count,:) = TrialD(it,:);
-               Miss_count=Miss_count+1;
-            end
+        if max(TrialD(:))% if we had targets presented in any gaits:
+        % also store by target classificaton, across all gaits:
+         trialDetected = trial_TargetSummary(itrial).gaitTargs_detected(usegaits);
+        for igait=1:length(trialDetected)
+           
+            if ~isnan(trialDetected(igait)) %nans were no resp required (no targ presented).
+                switch trialDetected(igait)
+                    case 1
+                        PFX_tHits_1flash(h1count,:) = TrialD(igait,:);
+                        h1count=h1count+1;
+                    case 2
+                        PFX_tHits_2flash(h2count,:) = TrialD(igait,:);
+                        h2count=h2count+1;
+                    case 3
+                        PFX_tMiss_1flash(m1count,:) = TrialD(igait,:);
+                        m1count=m1count+1;
+                    case 4
+                        PFX_tMiss_2flash(m2count,:) = TrialD(igait,:);
+                        m2count=m2count+1;
+                    case 0
+                        PFX_tNoresp(norespcount,:) = TrialD(igait,:);
+                        norespcount=norespcount+1;
+                end
                 
-        end
-%      
-    end % trial
-    %% sanity check plot:
-%     %
-    clf
-    plot(mean(PFX_headY));
-    hold on;
-    % convert count for histogram plots:
-    dataIN=[];
-    dataIN(1).d = PFX_tHits;
-    dataIN(2).d = PFX_tMiss;
-    cols = {'g', 'r'};
-    for itype=1:2
-        
-        sampSum = sum(dataIN(itype).d,1);
-        hist_Data=[];
-        for id=1:100
-            if sampSum(id)>0
-                tmp = repmat(id, 1, sampSum(id));
-                hist_Data =[ hist_Data, tmp];
-            end
-        end
-        yyaxis right
-        histogram(hist_Data, 100, 'FaceColor', cols{itype});
-        
-    end
-%%
-    %%
-    save(savename, 'HeadPos', 'Data_perTrialpergait',...
+            end 
+                
+                
+        end % all gaits
+        end % targ present trial
+    end % all trials
+  
+    allts= norespcount+m2count+m1count+h2count+h1count;
+    % check we aren't missing data:
+    disp([' ALl targs recorded for participant' num2str(ippant) '=' num2str(allts)]);
+    save(savename, 'HeadPos', 'trial_TargetSummary',...
         'PFX_headY', 'PFX_tOnsets',...
-        'PFX_tHits', 'PFX_tMiss', '-append');
+       'PFX_tHits_1flash',...
+        'PFX_tHits_2flash',...
+         'PFX_tMiss_1flash', ...
+        'PFX_tMiss_2flash', 'PFX_tNoresp','-append');
 end % subject
 

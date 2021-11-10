@@ -41,10 +41,11 @@ for ippant=1:length(pfols)
         end
         
         tOnsets_FA_smry = [tOnsets_FA_smry, tF'];
-        % split by H and Miss:
-        hm = find( trial_TargetSummary(itrial).targdetected);
+        % split by Resp Class (correct and incorrect).
+       
+        hm = find( trial_TargetSummary(itrial).targRespCorrect);
         hits= tO(hm);
-        tm =  find( trial_TargetSummary(itrial).targdetected ==0);
+        tm =  find( trial_TargetSummary(itrial).targRespCorrect ==0);
         misses = tO(tm);
         
         tOnsets_Hit_smry = [tOnsets_Hit_smry, hits'];

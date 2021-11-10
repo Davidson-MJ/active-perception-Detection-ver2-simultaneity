@@ -3,11 +3,15 @@
 %frame by frame first:
 
 %raw data dir;
-datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
-cd(datadir);
+cd ../Raw_data;
+
+% datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
+datadir = pwd;
+% cd(datadir);
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
+nprac = [20,40]; % npractice trials per ppant.
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
 for ippant = 1:nsubs
    cd(datadir)
@@ -92,7 +96,7 @@ for ippant = 1:nsubs
     disp(['Saving position data split by trials... ' subjID]);
     rawFramedata_table = T;
     cd('ProcessedData')
-    save(savename, 'TargPos', 'HeadPos', 'TargState', 'clickState', 'rawFramedata_table', 'subjID', 'ppant');
+    save(savename, 'TargPos', 'HeadPos', 'TargState', 'clickState', 'rawFramedata_table', 'subjID', 'ppant', '-append');
     
 
 
@@ -160,8 +164,6 @@ cd(datadir)
 pfols = dir([pwd filesep '*trialsummary.csv']);
 nsubs= length(pfols);
 %
-practiceTrials= 1:40;
-disp(['Using 40 practice trials! - correct?'])
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
 for ippant = 1:nsubs
    cd(datadir)
@@ -181,7 +183,7 @@ for ippant = 1:nsubs
     % summarise relevant data:
     % calibration is performed after every target (present)
     targPrestrials =find(T.nTarg>0);
-    practIndex = find(T.trial < 41);
+    practIndex = find(T.trial <= nprac);
     
     %extract the rows in our table, with relevant data for assessing
     %calibration:
@@ -195,7 +197,7 @@ for ippant = 1:nsubs
         calibAcc(itarg) = sum(tmpD)/length(tmpD);
     end
     %retain contrast values:
-    calibContrast = T.targContrast(calibAxis);
+    calibContrast = T.targGap(calibAxis);
     
     %% extract Target onsets per trial (struct).
     %% and Targ RTs
@@ -209,13 +211,22 @@ for ippant = 1:nsubs
         tOnsets = T.targOnset(relvrows);
         tRTs = T.targRT(relvrows);
         tCor = T.targCor(relvrows);       
-        tFAs = T.FA_rt(relvrows);
+        tFAs = unique(T.FA_rt(relvrows));
         
-        RTs = (tRTs - tOnsets) .* tCor;
+       	tTypes = T.targFlash(relvrows); % nflashes presented
+        %RTs
+        RTs = (tRTs - tOnsets);
+        
+        %note that negative RTs, indicate that no response was recorded:
+        tOmit = find(RTs<0);
+        if ~isempty(tOmit)
+            tCor(tOmit) = NaN; % don't count those incorrects, as a mis identification.
+        end
         %store in easier to wrangle format
         trial_TargetSummary(itrial).trialID= thistrial;
         trial_TargetSummary(itrial).targOnsets= tOnsets;
-        trial_TargetSummary(itrial).targdetected= tCor;
+        trial_TargetSummary(itrial).targTypes= tTypes;
+        trial_TargetSummary(itrial).targRespCorrect= tCor;
         trial_TargetSummary(itrial).targRTs= RTs;
         trial_TargetSummary(itrial).clickOnsets= tRTs;
        
