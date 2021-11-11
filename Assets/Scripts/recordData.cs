@@ -74,8 +74,8 @@ public class recordData : MonoBehaviour
             Vector3 currentVeridicalEffector = effector.transform.position;
             Vector3 currentHead = hmd.transform.position;
 
-           
-            clickState = viveInput.clickState
+
+            clickState = (viveInput.clickState) ? 1:0;
 
             timePointPosition[0] = currentTarget.x;
             timePointPosition[1] = currentTarget.y;

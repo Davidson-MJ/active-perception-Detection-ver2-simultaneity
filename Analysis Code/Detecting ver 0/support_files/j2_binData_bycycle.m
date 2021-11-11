@@ -10,9 +10,9 @@ pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-nPractrials=[20,40]; %?
+nPractrials=[20,40,40,40]; %?
 %%%%
-for ippant = 1:nsubs
+for ippant = 4%3:4%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name);
     savename = pfols(ippant).name;

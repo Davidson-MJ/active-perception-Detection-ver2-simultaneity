@@ -12,7 +12,7 @@ public class walkParameters : MonoBehaviour
     // random walk params
     [Header("Walking/Tracking Parameters")]
     //public float trialDuration;
-    public float reachHeight = 1.3f;
+    public float reachHeight;
     public float walkingPathDistance;
     public float walkingSpeed;
     public float walkDuration;

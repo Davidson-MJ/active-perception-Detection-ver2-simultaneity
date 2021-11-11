@@ -11,14 +11,15 @@ nsubs= length(pfols);
 
 
 %%%%
-for ippant = 1:nsubs
+for ippant = 4%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name); 
     
     
     %% figure:
     figure(1); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
-    plot(mean(PFX_headY));
+   yyaxis left
+    plot(nanmean(PFX_headY));
     hold on;
     % convert counts per trial, for histogram plots:
     dataIN=[];
@@ -46,7 +47,7 @@ for ippant = 1:nsubs
         
         subplot(2,3,1); hold on;
         yyaxis left
-        plot(mean(PFX_headY));
+        plot(nanmean(PFX_headY)); hold on
         yyaxis right
         usespecs= lspecs{itype};        
          hg= histogram(hist_Data, 100, 'FaceColor', usespecs(1) , 'LineStyle', usespecs(2));
@@ -56,8 +57,8 @@ for ippant = 1:nsubs
         
         subplot(2,3, 1+itype); hold on;
         yyaxis left
-         plot(mean(PFX_headY)); 
-          
+         plot(nanmean(PFX_headY)); 
+          hold on;
         yyaxis right
         hg= histogram(hist_Data, 100, 'FaceColor', usespecs(1) , 'LineStyle', usespecs(2));
             title(titlesare{itype+1})

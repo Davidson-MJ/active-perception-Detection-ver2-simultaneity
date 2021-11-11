@@ -1,0 +1,41 @@
+% plotAccuracy_comparison
+
+% simple comparison of performance in calibration vs walking.
+
+
+
+cd([datadir filesep 'ProcessedData']);
+pfols= dir([pwd  filesep '*summary_data.mat']);
+nsubs= length(pfols);
+
+
+nPracticetrials= [20,40,40,40];
+%% %%
+for ippant = 3%:nsubs
+    cd([datadir filesep 'ProcessedData'])    %%load data from import job.
+    load(pfols(ippant).name, 'calibData', 'calibAcc', 'calibGap'); 
+    
+    subplot(2,3,1) % plot calibration data
+    plot(1:length(calibData), calibAcc)
+    ylabel('Accuracy');
+    ylim([.5 1]);
+    yyaxis right
+    plot(1:length(calibData), calibGap)
+    title('flash gap');
+    title(['Final acc: ' num2str(calibAcc(end)) ', t=' num2str(calibGap(end)) 'sec'])
+    
+    
+    %remaining trials:
+    expts = rawSummary_table.trial>nPracticetrials(ippant);
+    trialcor = rawSummary_table.targCor(expts);
+    
+    trialtype = rawSummary_table.targFlash(expts);
+    
+    % compare 1 and 2 t
+    t1dat = trialcor(trialtype<2);
+    t2dat = trialcor(trialtype>2);
+    barD = mean(t1dat)/length
+
+end
+%%
+shg

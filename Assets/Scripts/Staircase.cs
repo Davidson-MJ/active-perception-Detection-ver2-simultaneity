@@ -13,7 +13,7 @@ public class Staircase : MonoBehaviour
 
     [Header("Difficulty setting:")]
     public string curUpdate;
-    public float PercentDetect; 
+    public float PercentDetect2flash; 
     public int  prevResp, callCount, nCorrReverse, nErrReverse, corrCount, errCount, numCorrect, numError, reverseCount;
     //public bool ascending, initialAscending, updateStepSize = false; // initially going up/down?
 
@@ -48,7 +48,7 @@ public class Staircase : MonoBehaviour
         nCorrReverse = 3; // 3 down 1 up approximates 80% cor (1/2)^(1/3)
         //nCorrReverse = 2; // 2 down 1 up approximates 74% cor (1/2)^(1/3)
         nErrReverse = 1;
-        PercentDetect = 0f;
+        PercentDetect2flash = 0f;
         targetAlpha = .8f;
         // set colours
          preTrialColor= new Color(0f, 0.5f, 0f, targetAlpha); //drk green
@@ -71,11 +71,12 @@ public class Staircase : MonoBehaviour
         callCount++;
         // work through options:
         // correct detects first (staircase isn't updated after correct rejections).
-        if (reverseCount == 5)
+        if (reverseCount == 10)
         {
-            print("reducing step size");
-            stepSize = stepSize / 2;
+            //print("reducing step size");
+            stepSize = stepSize * 0.8f; // increme
             reverseCount = 0;
+
 
         }
         if (responseAcc == 1)
@@ -94,10 +95,12 @@ public class Staircase : MonoBehaviour
                 if (targetTestgapDuration <= stepSize)
                 {
                     targetTestgapDuration = stepSize; //avoid overshooting.
-                    print("WARNING! adjust step size");
+                    print("WARNING! adjusting step size");
+                    stepSize = stepSize * 0.8f; // increment
+                    targetTestgapDuration = prvTargGap - stepSize;
                 }
-                    
-            } else
+
+            }  else
             {
                 // maintain difficulty.
                
@@ -121,7 +124,7 @@ public class Staircase : MonoBehaviour
                 errCount = 0; //reset counter
                 
                 reverseCount++;
-                curUpdate = "Decreasing difficulty"; //by increasing contrast.
+                curUpdate = "Decreasing difficulty"; //.
                 targetTestgapDuration = prvTargGap + stepSize;
             } else
             {
@@ -133,7 +136,7 @@ public class Staircase : MonoBehaviour
         }
 
 
-        PercentDetect = ((float)numCorrect / (float)callCount)*100; // total correct detect divide amount of targs presented.
+        PercentDetect2flash = ((float)numCorrect / (float)callCount)*100; // total correct detect divide amount of targs presented.
 
         prevResp = responseAcc;
 

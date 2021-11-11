@@ -13,7 +13,7 @@ public class targetAppearance : MonoBehaviour
     public bool processNoResponse;
     private float waitTime;
     public int OneorTwoFlashes;
-
+    private float subtr;
     runExperiment runExperiment;
     Renderer rend;
     trialParameters trialParams;
@@ -53,79 +53,55 @@ public class targetAppearance : MonoBehaviour
             OneorTwoFlashes = 0; // reset this listener.
 
             float[] preTargISI = new float[runExperiment.TrialType]; // 
+            float[] gapsare = new float[runExperiment.TrialType]; // used to calc preTargISI below
             float jitter = Random.Range(0.01f, 0.02f);
             // pseudo randomly space targets, with minimum ITI of responseWindow
-
-            if (runExperiment.TrialType == 8)
-            {
-                // 8 targets squeezed in quick succession:
-                preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - 7 * (trialParams.minITI + jitter));
-
-                // next target 2/8:
-                preTargISI[1] = Random.Range(preTargISI[0] + trialParams.minITI, trialParams.targRange[1] - 6 * (trialParams.minITI + jitter));
-
-                // targ 3/8
-                preTargISI[2] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 5 * (trialParams.minITI + jitter));
-
-                // targ 4/8
-                preTargISI[3] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1] - 4 * (trialParams.minITI + jitter));
-
-                // targ 5/8
-                preTargISI[4] = Random.Range(preTargISI[3] + trialParams.minITI, trialParams.targRange[1] - 3 * (trialParams.minITI + jitter));
-
-
-                preTargISI[5] = Random.Range(preTargISI[4] + trialParams.minITI, trialParams.targRange[1] - 2 * (trialParams.minITI + jitter));
-
-
-                preTargISI[6] = Random.Range(preTargISI[5] + trialParams.minITI, trialParams.targRange[1] - (trialParams.minITI + jitter));
-
-                //targ 8/8
-                preTargISI[7] = Random.Range(preTargISI[6] + trialParams.minITI, trialParams.targRange[1]);
-
-
-            }
-            else if (runExperiment.TrialType == 5) // increased spacing between targs
-            {
-                //restricted range to ensure spacing.
-                // need to leave room for 3 targ and response after the first.
-                preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - 8 * (trialParams.minITI + jitter));
-                // next target 2/4:
-                // targ 3/4
-                preTargISI[1] = Random.Range(preTargISI[0] + trialParams.minITI, trialParams.targRange[1] - 7 * (trialParams.minITI + jitter));
-
-                preTargISI[2] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 5 * (trialParams.minITI + jitter));
-
-                preTargISI[3] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1] -  3*(trialParams.minITI + jitter));
-               
-                preTargISI[4] = Random.Range(preTargISI[3] + trialParams.minITI, trialParams.targRange[1]);
-            }
-               
-            else if (runExperiment.TrialType == 4) // increased spacing between targs
-            {
-                //restricted range to ensure spacing.
-                // need to leave room for 3 targ and response after the first.
-                preTargISI[0] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - 6 * (trialParams.minITI + jitter));
-                // next target 2/4:
-                preTargISI[1] = Random.Range(preTargISI[0] + trialParams.minITI, trialParams.targRange[1] - 4 * (trialParams.minITI + jitter));
-                // targ 3/4
-                preTargISI[2] = Random.Range(preTargISI[1] + trialParams.minITI, trialParams.targRange[1] - 2*(trialParams.minITI + jitter));
-
-                preTargISI[3] = Random.Range(preTargISI[2] + trialParams.minITI, trialParams.targRange[1]);
-            }
+            // note that these trial times have been simulated, don't tweak without running another simulation to ensure decent spread.
             
-            else if (runExperiment.TrialType == 0) // no targets
+            // shift the intertrial ISI on random trials:
+            subtr = Random.Range(0f, .5f);
+
+
+            if (runExperiment.TrialType == 6)
             {
-                trialParams.targOnsetTimeList.Add(-1); // place holder so that the onset, response, and corr, lists remain the same length.
-                trialParams.targResponseTimeList.Add(-1);
-                trialParams.targResponseList.Add(-1);
-                //targCorrList appended after (see Update()), based on whether clicks recorded (FAthistrial)
+                gapsare[0] = 5.75f-subtr; // 
+                gapsare[1] = 4.75f - subtr;
+                gapsare[2] = 3.75f - subtr;
+                gapsare[3] = 2.75f - subtr;
+                gapsare[4] = 1.75f - subtr;
+                gapsare[5] = 0f;
+
+            } else if (runExperiment.TrialType == 5)
+            {
+                gapsare[0] = 4.25f - subtr;
+                gapsare[1] = 3.25f - subtr;
+                gapsare[2] = 2.25f - subtr;
+                gapsare[3] = 1.25f - subtr;
+                gapsare[4] = 0f;
+            } else if (runExperiment.TrialType == 4)
+            {
+                gapsare[0] = 3.75f - subtr;
+                gapsare[1] = 2.5f - subtr;
+                gapsare[2] = 1.5f - subtr;
+                gapsare[3] = 0.5f - subtr;
             }
 
+            // now prefill the preTargISI
+            for (int itargindx = 0; itargindx < runExperiment.TrialType; itargindx++)
+            {
+                if (itargindx == 0) // start at trial beginning. targRange[0]
+                {
+                    preTargISI[itargindx] = Random.Range(trialParams.targRange[0], trialParams.targRange[1] - gapsare[itargindx] * (trialParams.minITI + jitter));
 
+                } else // use prev targ presentation as earliest point:
+                {
+                    preTargISI[itargindx] = Random.Range(preTargISI[itargindx-1], trialParams.targRange[1] - gapsare[itargindx] * (trialParams.minITI + jitter));
+
+                }
+                
+            }
 
             runExperiment.detectIndex = 0; // listener, to assign correct responses per target [0 = FA, 1 = targ1, 2 = targ 2]
-
-            
 
             // change target colour to indicate trial prep ("Get Ready!")
             setColour(ppantStaircase.preTrialColor);
@@ -133,6 +109,8 @@ public class targetAppearance : MonoBehaviour
             //now change colour and wait before target Onset.
             yield return new WaitForSecondsRealtime(trialParams.preTrialsec);
             setColour(ppantStaircase.probeColor);
+
+
 
 
             // show target [use duration or colour based on staircase method].
@@ -159,15 +137,15 @@ public class targetAppearance : MonoBehaviour
                         OneorTwoFlashes = 2;
                         print("Two flashes incoming");
                     }
-                           
+
                     // first target has no ISI adjustment
                     if (itargindx == 0)
-                        {
-                            waitTime = preTargISI[0];
-                        }
+                    {
+                        waitTime = preTargISI[0];
+                    }
                     else
-                     {// adjust for time elapsed.
-                            waitTime = preTargISI[itargindx] - runExperiment.trialTime;
+                    {// adjust for time elapsed.
+                        waitTime = preTargISI[itargindx] - runExperiment.trialTime;
                     }
 
                     // wait before presenting target:
@@ -184,11 +162,11 @@ public class targetAppearance : MonoBehaviour
                     setColour(ppantStaircase.probeColor); // return to original colour:
                     runExperiment.targState = 0; // target is removed
 
-                    if  (OneorTwoFlashes==2)
+                    if (OneorTwoFlashes == 2)
                     {
                         // wait gap dur, then present another target.
                         yield return new WaitForSeconds(ppantStaircase.targetGap);
-                       // change colour - detect window begins. 
+                        // change colour - detect window begins. 
                         setColour(ppantStaircase.targetColor);
                         runExperiment.targState = 1; // target is shown
                         yield return new WaitForSecondsRealtime(trialParams.targDurationsec);
@@ -198,8 +176,8 @@ public class targetAppearance : MonoBehaviour
                         runExperiment.targState = 0; // target is removed
                     }
 
-                    
-                    
+
+
                     yield return new WaitForSecondsRealtime(trialParams.responseWindow);
 
                     // if no click in time, count as a miss.
@@ -211,18 +189,19 @@ public class targetAppearance : MonoBehaviour
                     runExperiment.targCount++;
                 }
 
-               
-            }
+
+            } //if present
             // after for loop, wait for trial end:
             while (runExperiment.trialTime < motionParams.walkDuration)
             {
                 yield return null;  // wait until next frame. 
             }
+        } //while in trial
 
-        }
+    } //enumerator
+                
 
-    }
-
+     
     // color change method.
     public void setColour(Color newCol)
     {

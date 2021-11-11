@@ -152,7 +152,7 @@ public class runExperiment : MonoBehaviour
         }
      
         // check for target detection.(indicated by  L/R trigger click).
-        if (trialinProgress && viveInput.clickState)
+        if (trialinProgress && (trialTime> 0.5f) && viveInput.clickState)
         {
             collectDetect(); // places RTs within an array. [ function will determine correct or no]
            
@@ -344,7 +344,7 @@ public class runExperiment : MonoBehaviour
                 // set up  contrast for the next target:
                 if (TrialCount > 0 && TrialCount <= nStaircaseTrials)
                 {
-                    updateTargGapDuration(trialParams); // based on staircase.
+                    updateTargGapDuration(trialParams); // Only update staircase based on 2flash performance.
 
                 }
                 else // also need to update trial contrast on prestaircase init
@@ -436,15 +436,9 @@ public class runExperiment : MonoBehaviour
             trialParams.targResponseList.Add(0); 
             print("Miss!");
             // 
-            // set up  contrast for the next target:
-            if (TrialCount > 0 && TrialCount <= nStaircaseTrials)
-            {
-                updateTargGapDuration(trialParams); // based on staircase.
-            }
-            else // also update targContrast store, pre staircase init.
-            {
-                trialParams.targGapDuration.Add(ppantStaircase.targetGap);
-            }
+            
+            trialParams.targGapDuration.Add(ppantStaircase.targetGap);
+            
 
             recordData.collectTrialSummary();// pass to Record Data (after every missed targ)
 
@@ -461,8 +455,12 @@ public class runExperiment : MonoBehaviour
         int last = trialParams.targCorrectList.Count;
         int prevAcc = trialParams.targCorrectList[last-1];
 
-        // update the targetColor within Staircase:
-        ppantStaircase.UpdateStaircase(prevAcc, ppantStaircase.targetGap, trialParams.trialTypeList[TrialCount]);
+        // if the current target was a 2 flash, call staircase
+        if (targetAppearance.OneorTwoFlashes == 2)
+        {
+            ppantStaircase.UpdateStaircase(prevAcc, ppantStaircase.targetGap, trialParams.trialTypeList[TrialCount]);
+
+        }
 
         // store newly updated target contrast
         trialParams.targGapDuration.Add(ppantStaircase.targetGap);

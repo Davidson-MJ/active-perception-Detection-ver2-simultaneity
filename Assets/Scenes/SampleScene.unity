@@ -8909,7 +8909,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1ee09535d8d81438bf87e9b2bbfcd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  participant: mjd
+  participant: mjd_newstair
   TrialCount: 0
   TrialType: 0
   targCount: 0
@@ -8992,7 +8992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curUpdate: 
-  PercentDetect: 0
+  PercentDetect2flash: 0
   prevResp: 0
   callCount: 0
   nCorrReverse: 0
@@ -9050,8 +9050,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   preTrialsec: 0.5
-  responseWindow: 0.6
-  targDurationsec: 0.03
+  responseWindow: 0
+  targDurationsec: 0
   minITI: 0
   trialTypeArray: 
   targRange: []

@@ -9,7 +9,7 @@ pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-nPractrials=[20,40]; %?
+nPractrials=[20,40,40,40]; %?
 %%
 % threshold between peaks for detection
 pkdist = Fs/2.5; % 400ms.
@@ -19,7 +19,7 @@ pkheight = 0.0002; % (m)
 figure(1); clf;
 set(gcf, 'units', 'normalized', 'position', [0,0, .9, .9], 'color', 'w', 'visible', 'off');
 
-for ippant = 1:nsubs
+for ippant = 3:4%1:nsubs
     cd([datadir filesep 'ProcessedData'])
    
 %     pkdist = participantstepwidths(ippant);
@@ -198,7 +198,12 @@ for ippant = 1:nsubs
             end % if more troughs than peaks.
             
             if length(locs_trtr) ~= length(locs_ptr)+1
-                error('check code')
+                plot(Timevec, trialD);
+            hold on;
+            plot(Timevec(locs_ptr), trialD(locs_ptr), ['or']);
+            plot(Timevec(locs_trtr), trialD(locs_trtr), ['ob'])
+            disp('!check code')
+            continue
             end
             
             %%     visualize results.

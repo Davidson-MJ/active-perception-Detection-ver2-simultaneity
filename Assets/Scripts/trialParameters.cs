@@ -9,8 +9,8 @@ public class trialParameters : MonoBehaviour
     // within trial data params and storage [ move to scriptable object?]
 
     public float preTrialsec = 0.5f; // buffer for no targ onset. (1 step)
-    public float responseWindow = 1.5f; // this is the response window to record detection (after target onset).
-    public float targDurationsec = 0.02f; // 20 ms
+    public float responseWindow; // this is the response window to record detection (after target onset).
+    public float targDurationsec;// 30 ms
     public float minITI; //response window + targDursec
 
     // to be filled on Start():
@@ -61,19 +61,20 @@ public class trialParameters : MonoBehaviour
         runExperiment = GameObject.Find("scriptHolder").GetComponent<runExperiment>();
         // gather presets
         trialDur = walkParameters.walkDuration; // in second, determines how many targets we can fit in.
-
-        minITI = responseWindow + 2*targDurationsec+  .15f; //be conservative with ntargs, since gap might be large (starts at .07s)
+        responseWindow = 0.8f;
+        targDurationsec = .02f;
+        minITI = responseWindow + .15f; //be conservative with ntargs, since gap might be large (starts at .07s)
 
         float availTime = trialDur - (preTrialsec + responseWindow); // when can targets appear in walk?
         float nTargPres = Mathf.Floor(availTime / minITI); // how many targs in this window
 
         nTrials = runExperiment.nAllTrials;
 
-        nUniqueConditions = nTargPres - 1;// no targ, up to nTarg (indexed at 0,1,2...)
+        nUniqueConditions = nTargPres - 1;
 
         // % split. for the n conditions.
         trialsperCondition = (int)Mathf.Floor(nTrials / 10); // 5% of trials as catch, 
-        print("creating trial allocation for max " + (nUniqueConditions - 1) + " targets");
+        print("creating trial allocation for max " + (nUniqueConditions) + " targets");
 
         // next, we will determine how many targets to present in our given walk duration (max 3 for home testing).
         // prefill the trialTypeArrayy as we go:
@@ -91,14 +92,14 @@ public class trialParameters : MonoBehaviour
 
         targRange = new float[2];
         targRange[0] = preTrialsec + responseWindow; // minimum targ onset time.
-        targRange[1] = trialDur - responseWindow - 0.3f; // max onset time, w/ extra buffer for late targets to be detected.
+        targRange[1] = trialDur - responseWindow; // max onset time, w/ extra buffer for late targets to be detected.
 
         // prefill array:
         targsPresented = new int[3];
         // have removed the 'absent' condition, pointless.
-        targsPresented[1] = 4;
-        targsPresented[2] = 5;
-        targsPresented[3] = 6;
+        targsPresented[0] = 4;
+        targsPresented[1] = 5;
+        targsPresented[2] = 6;
 
         // prefill array:
         for (int icond= 0; icond <3; icond++)

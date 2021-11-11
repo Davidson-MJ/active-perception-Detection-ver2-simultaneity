@@ -7,13 +7,13 @@ cd ../Raw_data;
 
 % datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
 datadir = pwd;
-% cd(datadir);
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
-nprac = [20,40]; % npractice trials per ppant.
+nprac = [20,40,40,40]; % npractice trials per ppant.
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 1:nsubs
+for ippant = 4%3:4
+    
    cd(datadir)
     %% load subject data as table.
     filename = pfols(ippant).name;
@@ -96,7 +96,10 @@ for ippant = 1:nsubs
     disp(['Saving position data split by trials... ' subjID]);
     rawFramedata_table = T;
     cd('ProcessedData')
-    save(savename, 'TargPos', 'HeadPos', 'TargState', 'clickState', 'rawFramedata_table', 'subjID', 'ppant', '-append');
+    try save(savename, 'TargPos', 'HeadPos', 'TargState', 'clickState', 'rawFramedata_table', 'subjID', 'ppant', '-append');
+    catch
+        save(savename, 'TargPos', 'HeadPos', 'TargState', 'clickState', 'rawFramedata_table', 'subjID', 'ppant');
+    end
     
 
 
@@ -156,19 +159,12 @@ disp(['Saving data matrix for participant ' subjID ]);
 
 save(savename, 'Head_posmatrix', 'Targ_posmatrix', 'TargClickmatrix', 'avTime', '-append');
 
-end % participant
-
 %% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ now summary data
 
 cd(datadir)
 pfols = dir([pwd filesep '*trialsummary.csv']);
 nsubs= length(pfols);
-%
-%% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 1:nsubs
-   cd(datadir)
-    %% load subject data as table.
-    filename = pfols(ippant).name;
+filename = pfols(ippant).name;
     %extract name&date from filename:
     ftmp = find(filename =='_');
     subjID = filename(1:ftmp(end)-1);
@@ -181,9 +177,9 @@ for ippant = 1:nsubs
     
     savename = [subjID '_summary_data'];
     % summarise relevant data:
-    % calibration is performed after every target (present)
+    % calibration is performed after every dual target presented
     targPrestrials =find(T.nTarg>0);
-    practIndex = find(T.trial <= nprac);
+    practIndex = find(T.trial <= nprac(ippant));
     
     %extract the rows in our table, with relevant data for assessing
     %calibration:
@@ -197,7 +193,7 @@ for ippant = 1:nsubs
         calibAcc(itarg) = sum(tmpD)/length(tmpD);
     end
     %retain contrast values:
-    calibContrast = T.targGap(calibAxis);
+    calibGap = T.targGap(calibAxis);
     
     %% extract Target onsets per trial (struct).
     %% and Targ RTs
@@ -238,7 +234,7 @@ for ippant = 1:nsubs
     disp(['Saving trial summary data ... ' subjID]);
     rawdata_table = T;
     cd('ProcessedData')
-    save(savename, 'trial_TargetSummary', 'calibContrast', 'calibAcc', 'calibData',...
+    save(savename, 'trial_TargetSummary', 'calibGap', 'calibAcc', 'calibData',...
         'rawdata_table', 'subjID','rawSummary_table', '-append');
     
 %% Note that some trials can go missing from summary data, meaning the frame by frame
