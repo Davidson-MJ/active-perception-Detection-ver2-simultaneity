@@ -11,8 +11,8 @@ nsubs= length(pfols);
 
 
 nPractrials=[20,40,40,40]; %?
-%%%%
-for ippant = 4%3:4%1:nsubs
+%%
+for ippant = 1%3:4%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name);
     savename = pfols(ippant).name;

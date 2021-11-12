@@ -9,7 +9,7 @@ pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-nPractrials=[20,40,40,40]; %?
+nPractrials=[20,20,40,40]; %?
 %%
 % threshold between peaks for detection
 pkdist = Fs/2.5; % 400ms.
@@ -19,7 +19,7 @@ pkheight = 0.0002; % (m)
 figure(1); clf;
 set(gcf, 'units', 'normalized', 'position', [0,0, .9, .9], 'color', 'w', 'visible', 'off');
 
-for ippant = 3:4%1:nsubs
+for ippant = 1%3:4%1:nsubs
     cd([datadir filesep 'ProcessedData'])
    
 %     pkdist = participantstepwidths(ippant);

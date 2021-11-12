@@ -12,7 +12,7 @@ nsubs= length(pfols);
 nPrac=[21,41,41,41];
 %%
 clf;
-for ippant=4;%1:length(pfols)
+for ippant=1%1:length(pfols)
     %%
     
     cd([datadir filesep 'ProcessedData'])

@@ -1,13 +1,22 @@
 %sim targ onset:
-targRange=[1.3, 7.2];
+rw=0.8;
+trialdur= 11;
+targRange=[0.5+rw, trialdur-rw]; %trialDur- rw
 minITI = 0.95;
 
 %4,5,6 targets.
-
+% 8s window
 t4= repmat(4, 1,100);
 t5= repmat(5, 1,100);
 t6= repmat(6,1,100);
-trialtypes =[t4,t5,t6];
+
+%11s window
+t7 = repmat(7, 1,100);
+t8=  repmat(8, 1,100);
+t9 = repmat(9, 1,100);
+trialtypes =[t7,t8,t9];
+
+
 shf = randperm(length(trialtypes));
 trialtypes=trialtypes(shf);
 %% select from random between two numbers:
@@ -19,6 +28,7 @@ for itrial=1:length(trialtypes)
     pretargISI= [];
     switch trialtypes(itrial)
                
+        
         case 4
             gapsare =[ 3.75, 2.5, 1.5,.5];
             subpl=1;
@@ -28,13 +38,22 @@ for itrial=1:length(trialtypes)
         case 6
             gapsare= [5.75, 4.75, 3.75, 2.75, 1.75 ,0];
             subpl=3;
+            
+        case 7
+            gapsare= [8, 6.9, 5.8, 4.7, 3.6, 2.5, 0];
+            subpl=1;
+        case 8
+             gapsare= [ 7.7, 6.6, 5.5, 4.4, 3.3, 2.2, 1.1, 0];
+            subpl=2;
+        case 9
+            gapsare= [ 8.6, 7.5, 6.4, 5.3, 4.2, 3.2, 2.1, 0];
+            subpl=3;
+            
     end
     
     % randomly subtract between 0 or 0.5.
     subtr=rand(1)/2;
-    if trialtypes(itrial)==6
-%         subtr= round(rand(1));
-    end
+   
     gapsare= gapsare -subtr;
     
     for itpres= 1:length(gapsare)
@@ -55,10 +74,13 @@ for itrial=1:length(trialtypes)
         plot([pretargISI(it) pretargISI(it)], [0 1], 'k');
         hold on
     end
+    title(num2str(trialtypes(itrial)));
     % per trial
     alltargpres=[alltargpres,pretargISI];
     if any(diff(pretargISI)<minITI)
+        disp(diff(pretargISI))
         disp(['error type:' num2str(trialtypes(itrial)) ]);
+        
     end
 end %pertrial
 %% plot all

@@ -61,8 +61,39 @@ public class targetAppearance : MonoBehaviour
             // shift the intertrial ISI on random trials:
             subtr = Random.Range(0f, .5f);
 
-
-            if (runExperiment.TrialType == 6)
+            if (runExperiment.TrialType == 9)
+            {
+                gapsare[0] = 8.6f - subtr; // 
+                gapsare[1] = 7.5f - subtr;
+                gapsare[2] = 6.4f - subtr;
+                gapsare[3] = 5.3f - subtr;
+                gapsare[4] = 4.2f - subtr;
+                gapsare[5] = 3.2f - subtr; 
+                gapsare[6] = 2.1f - subtr; 
+                gapsare[7] = 0f;
+            }
+            else if (runExperiment.TrialType == 8)
+            {
+                gapsare[0] = 7.7f - subtr; // 
+                gapsare[1] = 6.6f - subtr;
+                gapsare[2] = 5.5f - subtr;
+                gapsare[3] = 4.4f - subtr;
+                gapsare[4] = 3.3f - subtr;
+                gapsare[5] = 2.2f - subtr;
+                gapsare[6] = 1.1f - subtr;
+                gapsare[7] = 0f;
+            }
+            else if (runExperiment.TrialType == 7)
+            {
+                gapsare[0] = 8f - subtr; // 
+                gapsare[1] = 6.9f - subtr;
+                gapsare[2] = 5.8f - subtr;
+                gapsare[3] = 4.7f - subtr;
+                gapsare[4] = 3.6f - subtr;
+                gapsare[5] = 2.5f;
+                gapsare[6] = 0f;
+            }
+            else if (runExperiment.TrialType == 6)
             {
                 gapsare[0] = 5.75f-subtr; // 
                 gapsare[1] = 4.75f - subtr;
@@ -87,7 +118,7 @@ public class targetAppearance : MonoBehaviour
             }
 
             // now prefill the preTargISI
-            for (int itargindx = 0; itargindx < runExperiment.TrialType; itargindx++)
+            for (int itargindx = 0; itargindx < gapsare.Length; itargindx++)
             {
                 if (itargindx == 0) // start at trial beginning. targRange[0]
                 {
@@ -121,7 +152,7 @@ public class targetAppearance : MonoBehaviour
 
 
                 // set at chance whether 1 or 2 will be presented.
-                for (int itargindx = 0; itargindx < runExperiment.TrialType; itargindx++)
+                for (int itargindx = 0; itargindx < gapsare.Length; itargindx++)
                 {
 
 
@@ -164,6 +195,11 @@ public class targetAppearance : MonoBehaviour
 
                     if (OneorTwoFlashes == 2)
                     {
+
+                        /// we will also jitter the second flash ( so contrast isn't repeated).
+                        float jit = Random.Range(-0.025f, 0.025f);
+                        ppantStaircase.targetColor = new  Color(ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetAlpha);
+
                         // wait gap dur, then present another target.
                         yield return new WaitForSeconds(ppantStaircase.targetGap);
                         // change colour - detect window begins. 

@@ -84,8 +84,8 @@ public class trialParameters : MonoBehaviour
         
         int icounter = 0;
         // just fit the max in:
-        trialsper.Add(trialsperCondition*3); // *10% of trials
-        trialsper.Add(trialsperCondition * 3); //
+        trialsper.Add(trialsperCondition*2); // *10% of trials
+        trialsper.Add(trialsperCondition * 4); //
         trialsper.Add(trialsperCondition * 4); //max target case
        
 
@@ -97,9 +97,9 @@ public class trialParameters : MonoBehaviour
         // prefill array:
         targsPresented = new int[3];
         // have removed the 'absent' condition, pointless.
-        targsPresented[0] = 4;
-        targsPresented[1] = 5;
-        targsPresented[2] = 6;
+        targsPresented[0] = 8;
+        targsPresented[1] = 7;
+        targsPresented[2] = 8;
 
         // prefill array:
         for (int icond= 0; icond <3; icond++)

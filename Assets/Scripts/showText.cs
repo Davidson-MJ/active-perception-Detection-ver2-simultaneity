@@ -29,8 +29,8 @@ public class showText : MonoBehaviour
         else if (text2show == 1)
         {
             // update at certain points.
-             thestring = "Welcome! \n When the orb is green: Left click to start Trial \n\n" +
-                " When the orb is grey: Watch for brief flashes." +
+             thestring = "Welcome! \n When the central disc is green: Left click to start Trial \n\n" +
+                " Watch for brief flashes." +
                 "If you perceive '1' flash, click Left; \n\n" + 
                 "If you perceive '2' flashes, click Right.";
         }else if (text2show == 2)

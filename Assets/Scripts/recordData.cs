@@ -46,7 +46,8 @@ public class recordData : MonoBehaviour
         runExperiment = GetComponent<runExperiment>();
         viveInput = GetComponent<ViveInput>();
         trialParameters  = GetComponent<trialParameters>();
-        targetAppearance = GameObject.Find("SphereShader").GetComponent<targetAppearance>(); 
+        //targetAppearance = GameObject.Find("SphereShader").GetComponent<targetAppearance>();
+        targetAppearance = GameObject.Find("TargetCylinder").GetComponent<targetAppearance>();
         // create text file for Position tracking data.
         createPositionTextfile(); // below for details.
 

@@ -24,9 +24,9 @@ public class walkParameters : MonoBehaviour
     [HideInInspector]
     public float rampDuration;
 
-    [HideInInspector]
+    //[HideInInspector]
     public Vector2 stepDurationRange;
-    [HideInInspector]
+    //[HideInInspector]
     public Vector2 stepDistanceRange;
 
 
@@ -37,7 +37,8 @@ public class walkParameters : MonoBehaviour
     public Vector3 cubeOrigin;
     public Vector3 planeDimensions;
     public Vector3 cubeDimensions;
-
+    public Vector3 upperBoundaries;
+    public Vector3 lowerBoundaries;
     [HideInInspector]
     public Vector3 passiveTaskOrigin;
     [HideInInspector]
@@ -53,23 +54,28 @@ public class walkParameters : MonoBehaviour
         reachHeight = 1.3f;
        
        // walkingSpeed = 0.7f; 
-        walkDuration = 8f;// 
-        walkingPathDistance = 7.5f;//  Determines end point. 
+        walkDuration = 9f;// 
+        walkingPathDistance = 9.5f;//  Determines end point. 
         //approx steps is dist / 0.5
 
         rampDistance = 0f;// 0.7f; // used in walkingGuide, added to total path distance above.
         rampDuration = 1f; // used in walkingGuide
-        guideDistance = 0.3f; // this is an offset, used to place the WG in front of the HMD, on calibration
+        guideDistance = 0.5f; // this is an offset, used to place the WG in front of the HMD, on calibration
         // dimensionality
 
         planeOrigin = new Vector3(0, 0, 0);
         cubeOrigin = new Vector3(0, 0, 0);
         planeDimensions = new Vector3(0.22f, 1f, .1f);
-        cubeDimensions = new Vector3(.25f, .25f, .25f);
-        stepDurationRange = new Vector2(0.2f, 0.4f);
-        stepDistanceRange = new Vector2(0.03f, 0.045f); // set with David 2020-02-13 (RTKeys)
-        
+        //cubeDimensions = new Vector3(.25f, .25f, .25f); // sets boundaries for the RW
+        cubeDimensions = new Vector3(1f, 1f, 1f); // sets boundaries for the RW
 
+        //RW params set in randomWalk.cs
+        stepDurationRange = new Vector2(0.2f, 0.4f);
+        // for sphere shader:
+        //stepDistanceRange = new Vector2(0.03f, 0.045f); // set with David 2020-02-13 (RTKeys)
+
+        // for cylinder:
+        stepDistanceRange = new Vector2(.1f, .5f);
 
     }
 

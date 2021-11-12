@@ -10,9 +10,9 @@ datadir = pwd;
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
-nprac = [20,40,40,40]; % npractice trials per ppant.
+nprac = [40,20,40]; % npractice trials per ppant.
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 4%3:4
+for ippant = 2%3:4
     
    cd(datadir)
     %% load subject data as table.

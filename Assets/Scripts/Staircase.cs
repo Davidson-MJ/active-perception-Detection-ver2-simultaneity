@@ -14,7 +14,7 @@ public class Staircase : MonoBehaviour
     [Header("Difficulty setting:")]
     public string curUpdate;
     public float PercentDetect2flash; 
-    public int  prevResp, callCount, nCorrReverse, nErrReverse, corrCount, errCount, numCorrect, numError, reverseCount;
+    public int  prevResp, callCount, nCorrReverse, nErrReverse, corrCount, errCount, numCorrect, numError, reverseCount, corrInrow;
     //public bool ascending, initialAscending, updateStepSize = false; // initially going up/down?
 
     private float targetTestgapDuration;
@@ -37,9 +37,10 @@ public class Staircase : MonoBehaviour
         //float stepSize = .01f; // needs to be pilotted
         //int nCorrReverse = 2; // adjust the contrast values if 2 correct in a row (increase difficulty).
         //int nErrReverse = 1;  // adjust the contrast values if 1 error (decrease difficulty)
-        stepSize = .005f; //  in sec
+        stepSize = .01f; //  in sec
         callCount = 0;
         reverseCount = 0;
+        corrInrow = 0;
         corrCount = 0; errCount = 0;
         numCorrect = 0;
         numError = 0;
@@ -53,6 +54,8 @@ public class Staircase : MonoBehaviour
         // set colours
          preTrialColor= new Color(0f, 0.5f, 0f, targetAlpha); //drk green
          probeColor = new Color(0.4f, 0.4f, 0.4f, targetAlpha); // dark grey
+
+        // now, we will update target colour for each target, jittering about 0.7 (see below).
         targetColor= new Color(.7f, .7f, .7f, targetAlpha); // bright grey (fixed).
 
 
@@ -74,11 +77,12 @@ public class Staircase : MonoBehaviour
         if (reverseCount == 10)
         {
             //print("reducing step size");
-            stepSize = stepSize * 0.8f; // increme
+            stepSize = stepSize /2;
             reverseCount = 0;
 
-
         }
+        
+
         if (responseAcc == 1)
         {
             corrCount++;
@@ -90,14 +94,12 @@ public class Staircase : MonoBehaviour
                 corrCount = 0; // reset
                 curUpdate = "Increasing difficulty.";
                 targetTestgapDuration = prvTargGap - stepSize;
+                corrInrow++;
 
-                
                 if (targetTestgapDuration <= stepSize)
                 {
                     targetTestgapDuration = stepSize; //avoid overshooting.
-                    print("WARNING! adjusting step size");
-                    stepSize = stepSize * 0.8f; // increment
-                    targetTestgapDuration = prvTargGap - stepSize;
+                    
                 }
 
             }  else
@@ -120,10 +122,10 @@ public class Staircase : MonoBehaviour
 
             if (errCount >= nErrReverse)
             {
-                // if response was incorrect nErrReverse times in a row, increase contrast, decrease difficulty.
+                // if response was incorrect nErrReverse times in a row,  decrease difficulty.
                 errCount = 0; //reset counter
                 
-                reverseCount++;
+                reverseCount++; // keep track of how many times, to update staircase step size
                 curUpdate = "Decreasing difficulty"; //.
                 targetTestgapDuration = prvTargGap + stepSize;
             } else
@@ -147,5 +149,13 @@ public class Staircase : MonoBehaviour
        
         targetGap = targetTestgapDuration;
         probeContrast = probeColor[1];
+
+        // to increase difficulty of the task, jitter the targetColour so that luminance summation cannot be used
+        //(relibaly) to estimate 2flashes.
+         float targJitter =  Random.Range(0.65f, 0.75f);
+
+        //targetColor = new Color(.7f, .7f, .7f, targetAlpha); // bright grey (fixed).
+        targetColor = new Color(targJitter, targJitter, targJitter, targetAlpha);
+
     }
 }

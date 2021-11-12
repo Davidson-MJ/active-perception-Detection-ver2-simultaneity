@@ -11,7 +11,7 @@ nsubs= length(pfols);
 
 nPracticetrials= [20,40,40,40];
 %% %%
-for ippant = 1:nsubs
+for ippant = 1%:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name, 'calibData', 'calibAcc', 'calibGap'); 
     clf

@@ -11,7 +11,7 @@ nsubs= length(pfols);
 
 
 %%%%
-for ippant = 4%1:nsubs
+for ippant = 1%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name); 
     

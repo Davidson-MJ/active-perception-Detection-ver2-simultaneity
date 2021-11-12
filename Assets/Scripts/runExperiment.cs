@@ -64,10 +64,15 @@ public class runExperiment : MonoBehaviour
     void Start()
     {
         // dependencies
-        targetAppearance = GameObject.Find("SphereShader").GetComponent<targetAppearance>();
+        //targetAppearance = GameObject.Find("SphereShader").GetComponent<targetAppearance>();
+        //randomWalk = GameObject.Find("Sphere").GetComponent<randomWalk>();
+
+        targetAppearance = GameObject.Find("TargetCylinder").GetComponent<targetAppearance>();
+        randomWalk = GameObject.Find("TargetCylinder").GetComponent<randomWalk>();
+
         viveInput = GameObject.Find("scriptHolder").GetComponent<ViveInput>();
         recordData = GameObject.Find("scriptHolder").GetComponent<recordData>();
-        randomWalk = GameObject.Find("Sphere").GetComponent<randomWalk>();
+        
         motionParams = GameObject.Find("scriptHolder").GetComponent<walkParameters>();
         walkingGuide = GameObject.Find("motionPath").GetComponent<walkingGuide>();
         trialParams = GameObject.Find("scriptHolder").GetComponent<trialParameters>();
@@ -77,7 +82,7 @@ public class runExperiment : MonoBehaviour
 
         // params, storage
         // make sure nAllTrials is divisible by 10.
-        nStaircaseTrials = 40;
+        nStaircaseTrials = 20;
         nTrials = 160;
         nAllTrials = nStaircaseTrials + nTrials;
        
@@ -268,8 +273,11 @@ public class runExperiment : MonoBehaviour
 
         randomWalk.transform.localPosition = motionParams.cubeOrigin;
         randomWalk.origin = motionParams.cubeOrigin;
-        randomWalk.lowerBoundaries = motionParams.cubeOrigin - motionParams.cubeDimensions;
-        randomWalk.upperBoundaries = motionParams.cubeOrigin + motionParams.cubeDimensions;
+        motionParams.lowerBoundaries = motionParams.cubeOrigin - motionParams.cubeDimensions;
+        motionParams.upperBoundaries= motionParams.cubeOrigin + motionParams.cubeDimensions;
+
+        randomWalk.lowerBoundaries = motionParams.lowerBoundaries;
+        randomWalk.upperBoundaries = motionParams.upperBoundaries;
         randomWalk.stepDurationRange = motionParams.stepDurationRange;
         // can't use   = stepDistanceRange; as the string is rounded to 1f precision.
         // so access the dimensions directly:
