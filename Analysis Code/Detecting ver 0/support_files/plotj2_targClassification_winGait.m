@@ -9,13 +9,16 @@ cd([datadir filesep 'ProcessedData']);
 pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
+job.plot_targDistribution=1;
 
+job.plot_targBinned=1;
 %%%%
 for ippant = 1%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name); 
     
     
+if job.plot_targDistribution==1
     %% figure:
     figure(1); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
    yyaxis left
@@ -71,5 +74,52 @@ for ippant = 1%1:nsubs
 %     title(pfols(ippant).name, 'interpreter', 'none');
     cd([datadir filesep  'Figures' filesep 'TargClass_withinGait'])
     print([pfols(ippant).name ' targs within gait'],'-dpng');
+end
+
+if job.plot_targBinned
+%% calculate proportions per binned section.
+bins=[1:25; 26:50; 51:75; 76:100];
+pidx= ceil(linspace(1,100,7));
+Staircaseresult= num2str(calibAcc(end));
+clf
+used=[1,3; 2,4];
+for itarg=1:2
+    if itarg==1
+    tmpC= sum(dataIN(1).d,1); % 1 corr.
+    tmpErr= sum(dataIN(3).d,1); % 1 err.
+    else
+         tmpC= sum(dataIN(2).d,1); % 1 corr.
+    tmpErr= sum(dataIN(4).d,1); % 1 err.
+    end
+        
+    prob=[];
+for ibin=1:length(pidx)-1
+    idx = pidx(ibin):pidx(ibin+1);
     
+    prop(ibin) = sum(tmpC(idx))/ (sum(tmpC(idx)) + sum(tmpErr(idx)));
+end
+
+subplot(2, 1, itarg);
+yyaxis left
+ylim([0 1]);
+plot(nanmean(PFX_headY)); hold on
+yyaxis right
+bar(pidx(1:end-1), prop, 'FaceAlpha', 0.2)
+title([num2str(itarg) ' flashes']) 
+ylabel(['Proportion correct'])
+ylim([0 1]);
+end
+shg
+
+%%
+sampSum = sum(dataIN(itype).d,1);
+dataIN=[];
+    dataIN(1).d = PFX_tHits_1flash;
+    dataIN(2).d = PFX_tHits_2flash;
+    dataIN(3).d = PFX_tMiss_1flash;
+    dataIN(4).d = PFX_tMiss_2flash;
+    dataIN(5).d = PFX_tNoresp;
+
+
+end
 end % ppant
