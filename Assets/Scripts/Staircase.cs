@@ -27,7 +27,7 @@ public class Staircase : MonoBehaviour
     public Color targetColor; // white, set at high contrast
     public float targetDuration; // flash duration, DV is the gap
     public float targetAlpha;
-   
+    public float targetContrast;
     
     private void Start()
     {
@@ -74,7 +74,7 @@ public class Staircase : MonoBehaviour
         callCount++;
         // work through options:
         // correct detects first (staircase isn't updated after correct rejections).
-        if (reverseCount == 10)
+        if (reverseCount == 7)
         {
             //print("reducing step size");
             stepSize = stepSize /2;
@@ -156,6 +156,7 @@ public class Staircase : MonoBehaviour
 
         //targetColor = new Color(.7f, .7f, .7f, targetAlpha); // bright grey (fixed).
         targetColor = new Color(targJitter, targJitter, targJitter, targetAlpha);
+        targetContrast = targetColor[0];
 
     }
 }

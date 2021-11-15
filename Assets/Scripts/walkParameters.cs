@@ -67,15 +67,16 @@ public class walkParameters : MonoBehaviour
         cubeOrigin = new Vector3(0, 0, 0);
         planeDimensions = new Vector3(0.22f, 1f, .1f);
         //cubeDimensions = new Vector3(.25f, .25f, .25f); // sets boundaries for the RW
-        cubeDimensions = new Vector3(1f, 1f, 1f); // sets boundaries for the RW
+
+        cubeDimensions = new Vector3(3f, 3f, 3f); // sets boundaries for the RW (now scaled for small screen).
 
         //RW params set in randomWalk.cs
-        stepDurationRange = new Vector2(0.2f, 0.4f);
+        stepDurationRange = new Vector2(0.2f, 0.4f); // update the direction of targer in this interval.
         // for sphere shader:
         //stepDistanceRange = new Vector2(0.03f, 0.045f); // set with David 2020-02-13 (RTKeys)
 
         // for cylinder:
-        stepDistanceRange = new Vector2(.1f, .5f);
+        stepDistanceRange = new Vector2(0.5f, 1f); // not xy, but a range for the distance RW will step.
 
     }
 

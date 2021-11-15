@@ -129,15 +129,14 @@ public class randomWalk : MonoBehaviour
 
             // Lerp creates 3d point interpolated between previous location and stepTowards loc.
             // Interpolates between the points a and b by the interpolant t. The parameter t is clamped to the range [0, 1].
-           
-            // new: do not update if the targets are being presented (otherwise smear results).
 
-            if (runExperiment.detectIndex == 0)
+            // new: do not update if the targets are being presented (otherwise smeared results).
+            if (runExperiment.pauseRW == 0) 
             {
                 Vector3 updatePosition = Vector3.Lerp(previousLocation, stepTowards, t / stepDuration);
                 transform.localPosition = updatePosition;
             }
-           
+
         }
         // end when phase.stop
         if (walk == phase.stop)

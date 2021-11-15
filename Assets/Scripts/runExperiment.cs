@@ -20,6 +20,7 @@ public class runExperiment : MonoBehaviour
     public int TrialType;  // targ absent, n present
     public int targCount; // targs presented (acculative), used to track data.
     public bool isPractice=true; // determines walking guide motion (stationary during practice).
+    public bool isStationary = true;
     public int nAllTrials; // staircase + ntrials (defined in Start())
 
     public int nStaircaseTrials;// = 40; // aka practice, used to calibrate target difficulty
@@ -36,6 +37,7 @@ public class runExperiment : MonoBehaviour
     public float trialTime; // clock within trial time, for RT analysis.
     public int targState; // targ currently on screen, used to synchron recordings in recordData (frame by frame).
     public int detectIndex; // index to allocate response to correct target within walk.
+    public int pauseRW; // used to pause the RW of a target while flash (or double flash) is being presented.
     public bool hasResponded; //listener for trigger responses after target onset < respone Window.
 
     //trial  
@@ -82,7 +84,7 @@ public class runExperiment : MonoBehaviour
 
         // params, storage
         // make sure nAllTrials is divisible by 10.
-        nStaircaseTrials = 20;
+        nStaircaseTrials = 40;
         nTrials = 160;
         nAllTrials = nStaircaseTrials + nTrials;
        
@@ -94,6 +96,7 @@ public class runExperiment : MonoBehaviour
         SetUpSession = true;
         collectTrialSummary = false; // send info after each target to be written to a csv file
         usematerial = 0; // 0=show stop sign, later changed to arrows for walk guide.
+        pauseRW = 0; // enable target to RW before flashes are shown.
 
         changeMat.update(0); // render stop sign
         showText.updateText(1); // pre trial exp instructions
@@ -259,12 +262,15 @@ public class runExperiment : MonoBehaviour
         {
             // set for outside(randomWalk) listeners. When practice, motion guide is stationary.
             isPractice = true;
-
+            isStationary = true;
             changeMat.update(usematerial); // Render green arrow.
         }
         else
         {
             isPractice = false; // start the motion path.
+
+            isStationary = false;
+
             usematerial = 1;
 
         }

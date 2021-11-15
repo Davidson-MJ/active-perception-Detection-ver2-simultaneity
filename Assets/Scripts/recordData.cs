@@ -88,12 +88,19 @@ public class recordData : MonoBehaviour
             timePointPosition[7] = currentHead.y;
             timePointPosition[8] = currentHead.z;
 
+            // convert bools to ints.
+            int testPrac = runExperiment.isPractice ? 1 : 0;
+            int testStat = runExperiment.isStationary ? 1 : 0;
+
+
             for (int j = 0; j < timePointPosition.Length; j++)
             {
                 string data =
                     System.DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + "," +
                     runExperiment.participant + "," +
                     runExperiment.TrialCount + "," +
+                    testPrac + "," +
+                    testStat + "," +
                     trialTime + "," +
                     timePointObject[j] + "," +
                     timePointAxis[j] + "," +
@@ -154,6 +161,8 @@ public class recordData : MonoBehaviour
             // add experiment: walkingTracking2D
             "participant," +
             "trial," +
+            "isPrac," +
+            "isStationary," +
             "t," +
             "trackedObject," +
             "axis," +
@@ -195,7 +204,9 @@ public class recordData : MonoBehaviour
         string columnNames = "date," +
             // add experiment: walkingTracking2D
             "participant," +
-            "trial," +            
+            "trial," + 
+            "isPrac," +
+            "isStationary," +
             "nTarg," +
             "targOnset," +
             "targFlash," +
@@ -239,13 +250,17 @@ public class recordData : MonoBehaviour
                 strfts = strfts + FA_rts[i].ToString() + ","; // separates into columns.
             }
         }
-       
 
+        // convert bools to ints.
+        int testPrac = runExperiment.isPractice? 1 : 0;
+        int testStat = runExperiment.isStationary ? 1 : 0;
 
         string data =
                   System.DateTime.Now.ToString("yyyy-MM-dd") + "," +
                   runExperiment.participant + "," +
                   runExperiment.TrialCount + "," +
+                  testPrac + "," +
+                  testStat + "," +
                   nTarg + "," +
                   targOnset + "," +
                   oneorTwo + "," +

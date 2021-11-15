@@ -9,7 +9,7 @@ pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-nPracticetrials= [20,40,40,40];
+% nPracticetrials= [20,40,40,40];
 %% %%
 for ippant = 1%:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
@@ -27,7 +27,7 @@ for ippant = 1%:nsubs
     
     set(gca,'fontsize', 15)
     %remaining trials:
-    expts = rawSummary_table.trial>nPracticetrials(ippant);
+    expts = find(rawSummary_table.isPrac==0);
     trialcor = rawSummary_table.targCor(expts);
     
     trialtype = rawSummary_table.targFlash(expts);

@@ -13,7 +13,7 @@ job.plot_targDistribution=1;
 
 job.plot_targBinned=1;
 %%%%
-for ippant = 1%1:nsubs
+for ippant = 3%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name); 
     
@@ -81,7 +81,8 @@ if job.plot_targBinned
 bins=[1:25; 26:50; 51:75; 76:100];
 pidx= ceil(linspace(1,100,7));
 Staircaseresult= num2str(calibAcc(end));
-clf
+    
+figure(2); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
 used=[1,3; 2,4];
 for itarg=1:2
     if itarg==1

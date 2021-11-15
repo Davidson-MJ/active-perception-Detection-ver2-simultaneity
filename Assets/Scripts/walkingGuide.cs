@@ -66,7 +66,7 @@ public class walkingGuide : MonoBehaviour
     void Update()
     {
 
-        if (!runExp.isPractice) // if not a calibration trial. begin motion.
+        if (!runExp.isStationary) // if not a calibration /stationary trial. begin motion.
         {
 
             if (walkMotion == motion.start) // update sesssion flow:

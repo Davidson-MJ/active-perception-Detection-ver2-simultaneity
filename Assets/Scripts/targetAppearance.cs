@@ -182,7 +182,8 @@ public class targetAppearance : MonoBehaviour
                     // wait before presenting target:
                     yield return new WaitForSecondsRealtime(waitTime);
 
-                    // change colour - detect window begins. 
+                    // change colour - detect window begins.
+                    runExperiment.pauseRW = 1; // pause RW of target (so single and double flashes are in same location).
                     setColour(ppantStaircase.targetColor);
                     runExperiment.targState = 1; // target is shown
                     runExperiment.detectIndex = itargindx + 1; //  click responses collected in this response window will be 'correct'
@@ -210,8 +211,9 @@ public class targetAppearance : MonoBehaviour
                         // note the trial type (nflashes) passed to recordData.
                         setColour(ppantStaircase.probeColor); // return to original colour:
                         runExperiment.targState = 0; // target is removed
+                       
                     }
-
+                    runExperiment.pauseRW = 0;
 
 
                     yield return new WaitForSecondsRealtime(trialParams.responseWindow);

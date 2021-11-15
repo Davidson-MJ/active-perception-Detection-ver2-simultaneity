@@ -3,18 +3,20 @@
 %frame by frame first:
 
 %raw data dir;
-cd ../Raw_data;
+% cd ../Raw_data;
 
 % datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
-datadir = pwd;
+datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
+% datadir = pwd;
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
-nprac = [40,20,40]; % npractice trials per ppant.
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 2%3:4
+for ippant = 4%1:2
     
    cd(datadir)
+   
+   pfols = dir([pwd filesep '*framebyframe.csv']);
     %% load subject data as table.
     filename = pfols(ippant).name;
     %extract name&date from filename:
@@ -35,11 +37,11 @@ for ippant = 2%3:4
     posData = T.position;
     clickData = T.clickstate;
     targStateData= T.targState;
-    
     objs = T.trackedObject;
     axes= T.axis;
     Trials =T.trial;
     Times = T.t;
+    walkorStationary= T.isStationary;
     
     targ_rows = find(contains(objs, 'target'));
     head_rows = find(contains(objs, 'head'));
@@ -64,6 +66,7 @@ for ippant = 2%3:4
         
         trial_rows = find(Trials==itrial-1); % indexing from 0 in Unity
         
+        
         trial_times = Times(intersect(hx, trial_rows));
         %Head first (X Y Z)
         HeadPos(itrial).X = posData(intersect(hx, trial_rows));
@@ -71,14 +74,16 @@ for ippant = 2%3:4
         HeadPos(itrial).Z = posData(intersect(hz, trial_rows));
         %store time (sec) for matching with summary data:
         HeadPos(itrial).times = trial_times;
-        
-        
+
+        HeadPos(itrial).isPrac = unique(T.isPrac(trial_rows));        
+        HeadPos(itrial).isStationary = unique(T.isStationary(trial_rows));
         
         TargPos(itrial).X = posData(intersect(tx, trial_rows));
         TargPos(itrial).Y = posData(intersect(ty, trial_rows));
         TargPos(itrial).Z = posData(intersect(tz, trial_rows));        
         TargPos(itrial).times = trial_times;
-        
+        TargPos(itrial).isPrac = unique(T.isPrac(trial_rows));        
+        TargPos(itrial).isStationary = unique(T.isStationary(trial_rows));
         
         % because the XYZ have the same time stamp, collect click and targ
         % state as well.
@@ -179,8 +184,8 @@ filename = pfols(ippant).name;
     % summarise relevant data:
     % calibration is performed after every dual target presented
     targPrestrials =find(T.nTarg>0);
-    practIndex = find(T.trial <= nprac(ippant));
-    
+    practIndex = find(T.isPrac ==1);
+    disp([subjID ' has ' (T.trial(practIndex(end)) +1) ' practice trials']);
     %extract the rows in our table, with relevant data for assessing
     %calibration:
     calibAxis = intersect(targPrestrials, practIndex);
@@ -227,7 +232,9 @@ filename = pfols(ippant).name;
         trial_TargetSummary(itrial).clickOnsets= tRTs;
        
         trial_TargetSummary(itrial).FalseAlarms= tFAs;
+        trial_TargetSummary(itrial).isPrac= HeadPos(itrial).isPrac;
         
+        trial_TargetSummary(itrial).isStationary= HeadPos(itrial).isStationary;
     end
      
     %save for later analysis per gait-cycle:
@@ -237,21 +244,5 @@ filename = pfols(ippant).name;
     save(savename, 'trial_TargetSummary', 'calibGap', 'calibAcc', 'calibData',...
         'rawdata_table', 'subjID','rawSummary_table', '-append');
     
-%% Note that some trials can go missing from summary data, meaning the frame by frame
-% and summary indexes are misaligned.
-% Adjust the frame-by-frame by using summary data as ground truth.
-% keptTrials = [trial_TargetSummary(:).trialID] +1; % account for index @ 0
-% 
-% load(savename); % reload Head_posmatrix etc.
-% Head_posmatrix_adj = Head_posmatrix(:,keptTrials,:);
-% TargClickmatrix_adj = TargClickmatrix(:,keptTrials,:);
-% Targ_posmatrix_adj = Targ_posmatrix(:, keptTrials,:);
-% TargPos_adj= TargPos(keptTrials);
-% HeadPos_adj= HeadPos(keptTrials);
-% TargState_adj=TargState(keptTrials);
-% clickState_adj=clickState(keptTrials);
-% 
-% save(savename, 'Head_posmatrix_adj', 'TargClickmatrix_adj', 'Targ_posmatrix_adj',...
-%     'TargPos_adj', 'HeadPos_adj', 'TargState_adj', 'clickState_adj','-append');
-%%
+
 end % participant

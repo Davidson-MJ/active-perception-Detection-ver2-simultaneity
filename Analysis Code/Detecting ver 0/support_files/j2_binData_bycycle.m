@@ -10,9 +10,9 @@ pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-nPractrials=[20,40,40,40]; %?
+% nPractrials=[20,40,40,40]; %?
 %%
-for ippant = 1%3:4%1:nsubs
+for ippant = 3%3:4%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name);
     savename = pfols(ippant).name;
@@ -22,13 +22,16 @@ for ippant = 1%3:4%1:nsubs
     % Per trial, extract gait samples (trough to trough), normalize along x
     % axis, and store various metrics.
     
-    nPrac = nPractrials(ippant)+1;
+   
     Data_perTrialpergait =[];
     % adjust summary data, to make sure it matches
    summaryInfoIDs = [trial_TargetSummary(:).trialID]+1; % unity @ 0
    
  
-    for itrial=nPrac:size(Head_posmatrix,2)
+    for itrial=1:size(Head_posmatrix,2)
+        if HeadPos(itrial).isPrac
+            continue
+        end
         targCount = 1;  % increment targets to collect correct info from summary.
        
         trs = HeadPos(itrial).Y_gait_troughs;
@@ -164,15 +167,20 @@ for ippant = 1%3:4%1:nsubs
     
     %% for all trials, compute the head pos per time point, and stacked targ Response class,
     % 0, 1, 2, 3, 4  = no resp, correct 1, 2, and incorrect 1 ,2 flashes.
-    ntrials = length([nPrac:size(HeadPos,2)]);
+    expindx= [HeadPos(:).isPrac];
+    nprac= length(find(expindx>0));
+    
+    ntrials = size(HeadPos,2)-nprac;
     [PFX_headY, PFX_tOnsets, PFX_tHits_1flash, ...
         PFX_tHits_2flash, PFX_tMiss_1flash, ...
         PFX_tMiss_2flash, PFX_tNoresp]= deal(zeros(ntrials,100));
     
     [h1count, h2count, m1count, m2count, norespcount]=deal(1);
    
-    for itrial= nPrac:size(trial_TargetSummary,2)
-        
+    for itrial= 1:size(trial_TargetSummary,2)
+        if HeadPos(itrial).isPrac
+            continue
+        end
        tmp=trial_TargetSummary(itrial).gaitTarg; % nGaits
        nGaits = size(tmp,1);
        allgaits = 1:nGaits;

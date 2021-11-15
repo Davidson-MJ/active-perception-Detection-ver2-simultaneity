@@ -9,21 +9,22 @@ cd([datadir filesep 'ProcessedData'])
 
 pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
-nPrac=[21,41,41,41];
+% nPrac=[21,41,41,41];
 %%
 clf;
-for ippant=1%1:length(pfols)
+for ippant=3%1:length(pfols)
     %%
     
     cd([datadir filesep 'ProcessedData'])
     load(pfols(ippant).name);
     %%
-    
+    expindx= [HeadPos(:).isPrac];
+    nprac= length(find(expindx>0));
     % fint the min length vec, first decrease in average represents a '0'
     shortesttrial= find(diff(mean(avTime)) <0);
     time_ax = mean(avTime(:, 1:shortesttrial));
     %restrict Head Y data:
-    HeadY = squeeze(Head_posmatrix(2,nPrac:end,1:shortesttrial));
+    HeadY = squeeze(Head_posmatrix(2,nprac:end,1:shortesttrial));
     
     %% compare to tOnsets in t summary:
     tOnsets_smry = [];
@@ -31,7 +32,7 @@ for ippant=1%1:length(pfols)
     tOnsets_Miss_smry = [];
     tOnsets_FA_smry = [];
     
-    for itrial = nPrac:length(trial_TargetSummary)
+    for itrial = nprac:length(trial_TargetSummary)
         % all onsets:
         tO = trial_TargetSummary(itrial).targOnsets;
         tOnsets_smry = [tOnsets_smry, tO'];
