@@ -1,5 +1,5 @@
 % rejectTrials_byPpant;
-
+badtrials=[];
 if strcmp(subjID, 'ph01_2021-11-16-11-50') 
     badtrials = 81;
 end

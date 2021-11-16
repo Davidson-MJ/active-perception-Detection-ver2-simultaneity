@@ -2,11 +2,11 @@
 
 %frame by frame first:
 
-%raw data dir;
-% cd ../Raw_data;
-
 % datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
-datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
+datadir= '/Users/matthewdavidson/Documents/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data';
+% datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
+
+cd(datadir);
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);

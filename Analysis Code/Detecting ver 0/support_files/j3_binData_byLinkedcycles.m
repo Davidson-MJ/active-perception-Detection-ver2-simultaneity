@@ -18,7 +18,7 @@ nsubs= length(pfols);
 
 resampSize = 200; % resample the gait cycle (DUAL CYCLE) to this many samps.
 %%
-for ippant = 1:nsubs
+for ippant = 5%1:nsubs
 cd([datadir filesep 'ProcessedData'])    %%load data from import job.
 
 load(pfols(ippant).name)
@@ -55,7 +55,7 @@ for itrial=1:size(HeadPos,2)
     targsPresented = max(tmpTarg);
     %preAllocate for easy storage
     gaitD=[]; %struct
-    [gaitHeadY, gaitTarg]= deal(zeros(length(pks)-2, 200)); % we will normalize the vector lengths.
+    [gaitHeadY, gaitTarg, gaitTarg_class]= deal(zeros(length(pks)-2, 200)); % we will normalize the vector lengths.
     
     %summary info for comparison:
     tOns_sumry= trial_TargetSummary(itrial).targOnsets;
@@ -77,31 +77,39 @@ for itrial=1:size(HeadPos,2)
         gaitDtmp_n = rescale(gaitDtmp);
         
             % was there a target onset in this gait?  
-            gaitTargtmp = zeros(1,200);
+            gaitTarg_vector = zeros(1,200);
             
+            % similar to gaittargtmp, place the target position, and dummy classifcaiton
+            %in rescaled vector
+                gaitTarg_classvector= zeros(1,200); 
+                
             targDtmp = tmpTarg(gaitsamps); 
             tO = find(targDtmp==1);
-            % 2nd targs captured?
-            if any(diff(tO)>10)
-%                 error('check')
-                   % multiple targets within double GC:
-                   % find onset of 2nd target:
-                 idx= find(diff(tO)>10) +1; 
-                 tO = [tO(1), tO(idx)];
-                 
-            else
-                tO=tO(1); 
-            end
+            
             [tRT,wasDetected]=deal(nan); % updated below.
             
             if ~isempty(tO) % target Onset occurred:
+                
+                % any extra targs captured?
+                if any(diff(tO)>10)
+                    %                 error('check')
+                    % multiple targets within double GC:
+                    % find onset of 2nd / 3rd target:
+                    idx= find(diff(tO)>10) +1;
+                    tO = [tO(1), tO(idx)'];
+                    
+                else
+                    tO=tO(1);
+                end
                 % prepare to collate data across multiple targets:                
                 [gPcnt_all,... % pcnt of gait cycle targ appears.
                     tOns_all,... % onset within gait
                  targTypewas_all,... % 1 or 2 flashes
                  time_Response_all,... % RT
-                 respWasCorrect_all,... %0 or 1;                
-                   targRespClass_all] = deal(zeros(length(tO),1)); % resp class dummy coded.
+                 respWasCorrect_all]...%0 or 1;                
+                    = deal(zeros(length(tO),1)); % resp class dummy coded.
+                
+               
                 
              for itarg=1:length(tO)
                 % use first target:
@@ -110,7 +118,7 @@ for itrial=1:size(HeadPos,2)
                  % preserve percnt position of the gait cycle:
                gPcnt = round((tOnow/length(gaitsamps))*200);
 %                disp(['Targ pcnt at ' num2str(gPcnt)]);
-               gaitTargtmp(gPcnt)=1; %store in resized vector.
+               gaitTarg_vector(gPcnt)=1; %store in resized vector.
                
                gPcnt_all(itarg)= gPcnt;
                % find how long until next RT, if within response bounds.               
@@ -123,30 +131,30 @@ for itrial=1:size(HeadPos,2)
                time_Response_all(itarg) = tRTs_sumry(targIDX_insummary);
                respWasCorrect_all(itarg) = tCor_sumry(targIDX_insummary);
               
-               %also dummy classiy
+               %also dummy classify. place the classification (below), in
+               %position along the rescaled (200 point) gait vector
                %  1= 1flash correct
                %  2 = 2flash correct
                %  3 = 1flash incorrect
                %  4 = 2flash incorrect
                %  0 = no resp
-               if ~isnan(respWasCorrect(itarg))
-                   if respWasCorrect(itarg)
-                       
-                   targRespClass_all(itarg) = targTypewas_all(itarg);
+               if ~isnan(respWasCorrect_all(itarg))
+                   if respWasCorrect_all(itarg)
+                       % 1 or 2
+                   gaitTarg_classvector(gPcnt) = targTypewas_all(itarg);
                    else 
-                       
-                   targRespClass_all(itarg) = targTypewas_all(itarg)+2;
+                       %3 or 4
+                   gaitTarg_classvector(gPcnt) = targTypewas_all(itarg)+2;
                    end
                else 
-                   targRespClass_all(itarg)= 0;
+                   % miss
+                   gaitTarg_classvector(gPcnt)= 0.1; % needs to be distinct within the vector (of zeros).
                end
               % concat across targs:
               
               
              end
-              if itarg==2
-                  pause
-              end
+             
                gaitD(igait).tOnset_inTrialidnx = tOns_all;
                gaitD(igait).tOnset_inGait = tO;
                gaitD(igait).tOnset_inGaitResampled = gPcnt_all;
@@ -154,15 +162,16 @@ for itrial=1:size(HeadPos,2)
                gaitD(igait).tType= targTypewas_all;
                gaitD(igait).tRT = time_Response_all;
                gaitD(igait).tRespCorr = respWasCorrect_all;
-               gaitD(igait).tRespClass = targRespClass_all;
+               gaitD(igait).tRespClass = gaitTarg_classvector;
                
             else 
                 % useful for aligning response classes to correct gaits (below)
                 gaitD(igait).tRespClass= nan; 
             end
-               % store data in matrix for easy handling:
+               % store key data in matrix for easy handling:
             gaitHeadY(igait,:) = imresize(gaitDtmp_n', [1,200]);
-            gaitTarg(igait,:) = gaitTargtmp;
+            gaitTarg(igait,:) = gaitTarg_vector;
+            gaitTarg_class(igait,:) = gaitTarg_classvector;
             
             %also store head Y info:
             gaitD(igait).Head_Yraw = gaitDtmp;
@@ -174,12 +183,11 @@ for itrial=1:size(HeadPos,2)
             
             
         end % gait in trial.
+        % also store matrix data at the trial level:
         trial_TargetSummary(itrial).gaitTarg_doubleGC = gaitTarg;
-        trial_TargetSummary(itrial).gaitHeadY_doubleGC= gaitHeadY;
-       
-        if targsPresented
-        trial_TargetSummary(itrial).gaitTargs_detected_doubleGC = [gaitD(:).tRespClass];
-        end
+        trial_TargetSummary(itrial).gaitHeadY_doubleGC= gaitHeadY;       
+        trial_TargetSummary(itrial).gaitTargs_detected_doubleGC = gaitTarg_class;
+        
         % save this gait info per trial in structure as well.
         HeadPos(itrial).gaitData_doubleGC = gaitD;
         trial_TargetSummary(itrial).gaitData_doubleGC = gaitD;
@@ -219,30 +227,38 @@ end %trial
         if max(TrialD(:))% if we had targets presented in any gaits:
         % also store by target classificaton, across all gaits:
          
-        trialDetected = trial_TargetSummary(itrial).gaitTargs_detected_doubleGC(usegaits);
+        trialDetected = trial_TargetSummary(itrial).gaitTargs_detected_doubleGC(usegaits,:);
          
-        for igait=1:length(trialDetected)
+        for igait=1:size(trialDetected,1)
            
-            if ~isnan(trialDetected(igait)) %nans were no resp required (no targ presented).
-                switch trialDetected(igait)
-                    case 1
+            % what was the classifcation on this trial?
+            tmpD = trialDetected(igait,:);
+            % bit inefficient, but shrink, then store:
+            targsClassthisgait = tmpD(tmpD~=0);
+            
+            for iclass= 1:length(targsClassthisgait)
+                tmpclass = targsClassthisgait(iclass);
+                
+                
+                switch tmpclass
+                    case 1 % 1 target, correctly perceived.
                         PFX_tHits_1flash_doubleGC(h1count,:) = TrialD(igait,:);
                         h1count=h1count+1;
-                    case 2
+                    case 2  % 2 targets, correctly perceived.
                         PFX_tHits_2flash_doubleGC(h2count,:) = TrialD(igait,:);
                         h2count=h2count+1;
-                    case 3
+                    case 3  % 1 target, incorrectly perceived.
                         PFX_tMiss_1flash_doubleGC(m1count,:) = TrialD(igait,:);
                         m1count=m1count+1;
-                    case 4
+                    case 4  % 2 targets, incorrectly perceived.
                         PFX_tMiss_2flash_doubleGC(m2count,:) = TrialD(igait,:);
                         m2count=m2count+1;
-                    case 0
+                    case 0.1
                         PFX_tNoresp_doubleGC(norespcount,:) = TrialD(igait,:);
                         norespcount=norespcount+1;
-                end
+                end % switch
                 
-            end 
+            end %iclass 
                 
                 
         end % all gaits
