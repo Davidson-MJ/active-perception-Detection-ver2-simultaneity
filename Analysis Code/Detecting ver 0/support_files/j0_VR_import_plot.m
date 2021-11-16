@@ -7,12 +7,11 @@
 
 % datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
 datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
-% datadir = pwd;
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 4%1:2
+for ippant = 1:nsubs
     
    cd(datadir)
    
@@ -185,7 +184,7 @@ filename = pfols(ippant).name;
     % calibration is performed after every dual target presented
     targPrestrials =find(T.nTarg>0);
     practIndex = find(T.isPrac ==1);
-    disp([subjID ' has ' (T.trial(practIndex(end)) +1) ' practice trials']);
+    disp([subjID ' has ' num2str((T.trial(practIndex(end)) +1)) ' practice trials']);
     %extract the rows in our table, with relevant data for assessing
     %calibration:
     calibAxis = intersect(targPrestrials, practIndex);
@@ -222,6 +221,7 @@ filename = pfols(ippant).name;
         tOmit = find(RTs<0);
         if ~isempty(tOmit)
             tCor(tOmit) = NaN; % don't count those incorrects, as a mis identification.
+            RTs(tOmit)=NaN; % remove no respnse 
         end
         %store in easier to wrangle format
         trial_TargetSummary(itrial).trialID= thistrial;
@@ -237,12 +237,15 @@ filename = pfols(ippant).name;
         trial_TargetSummary(itrial).isStationary= HeadPos(itrial).isStationary;
     end
      
+    %% clean up known 'bad trials'
+    rejectTrials_byPpant;
+    
     %save for later analysis per gait-cycle:
     disp(['Saving trial summary data ... ' subjID]);
     rawdata_table = T;
     cd('ProcessedData')
     save(savename, 'trial_TargetSummary', 'calibGap', 'calibAcc', 'calibData',...
-        'rawdata_table', 'subjID','rawSummary_table', '-append');
+        'rawdata_table', 'subjID','HeadPos','rawSummary_table', '-append');
     
 
 end % participant

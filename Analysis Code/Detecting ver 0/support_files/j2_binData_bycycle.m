@@ -10,9 +10,8 @@ pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 
-% nPractrials=[20,40,40,40]; %?
 %%
-for ippant = 3%3:4%1:nsubs
+for ippant = 1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name);
     savename = pfols(ippant).name;
@@ -25,10 +24,9 @@ for ippant = 3%3:4%1:nsubs
    
     Data_perTrialpergait =[];
     % adjust summary data, to make sure it matches
-   summaryInfoIDs = [trial_TargetSummary(:).trialID]+1; % unity @ 0
    
  
-    for itrial=1:size(Head_posmatrix,2)
+    for itrial=1:size(HeadPos,2)
         if HeadPos(itrial).isPrac
             continue
         end
@@ -79,7 +77,7 @@ for ippant = 3%3:4%1:nsubs
             if ~isempty(tO) % target Onset occurred:
                 
                 % preserve percnt position of the gait cycle:
-               gPcnt = round(tO/length(gaitsamps)*100);
+               gPcnt = round((tO/length(gaitsamps))*100);
                gaitTargtmp(gPcnt)=1; %store in resized vector.
               
                % find how long until next RT, if within response bounds.               
@@ -228,7 +226,7 @@ for ippant = 3%3:4%1:nsubs
   
     allts= norespcount+m2count+m1count+h2count+h1count;
     % check we aren't missing data:
-    disp([' ALl targs recorded for participant' num2str(ippant) '=' num2str(allts)]);
+    disp([' All targs recorded for participant' num2str(ippant) '=' num2str(allts)]);
     save(savename, 'HeadPos', 'trial_TargetSummary',...
         'PFX_headY', 'PFX_tOnsets',...
        'PFX_tHits_1flash',...

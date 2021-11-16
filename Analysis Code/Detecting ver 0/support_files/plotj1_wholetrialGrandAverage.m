@@ -12,27 +12,40 @@ nsubs= length(pfols);
 % nPrac=[21,41,41,41];
 %%
 clf;
-for ippant=3%1:length(pfols)
+for ippant=1:length(pfols)
     %%
     
     cd([datadir filesep 'ProcessedData'])
     load(pfols(ippant).name);
     %%
     expindx= [HeadPos(:).isPrac];
-    nprac= length(find(expindx>0));
-    % fint the min length vec, first decrease in average represents a '0'
-    shortesttrial= find(diff(mean(avTime)) <0);
-    time_ax = mean(avTime(:, 1:shortesttrial));
+    nprac= length(find(expindx>0));    
     %restrict Head Y data:
-    HeadY = squeeze(Head_posmatrix(2,nprac:end,1:shortesttrial));
-    
+    HeadY = squeeze(Head_posmatrix(2,nprac:end,:));
+    trial_ends=[];
+    for it=1:size(HeadY,1)
+    trial_ends = [trial_ends, find(HeadY(it,:)<1, 1 )];   
+    end
+    vecend= median(trial_ends); 
+    HeadY= HeadY(:, 1:vecend);
+    timevec = [0:vecend]/90; % Fs 
     %% compare to tOnsets in t summary:
     tOnsets_smry = [];
     tOnsets_Hit_smry = [];
     tOnsets_Miss_smry = [];
     tOnsets_FA_smry = [];
+     % plot
+    figure(1);clf;
+    set(gcf, 'units' ,'normalized', 'position', [0 0 .5 .5]);
     
     for itrial = nprac:length(trial_TargetSummary)
+        % plot head data this trial:
+        plot(HeadPos(itrial).times, HeadPos(itrial).Y, 'color', 'k', 'linew', 1);
+        hold on;
+        ylabel('Head height')
+        title(['Grand mean, nWalk(' num2str(nTrials) '), nTargs(' num2str(nTargs) ') -' ppant])
+        
+        
         % all onsets:
         tO = trial_TargetSummary(itrial).targOnsets;
         tOnsets_smry = [tOnsets_smry, tO'];
@@ -54,6 +67,8 @@ for ippant=3%1:length(pfols)
         tOnsets_Miss_smry = [tOnsets_Miss_smry, misses'];
         
     end
+    hold on;
+    plot(timevec, nanmean(HeadY(:, 1:vecend),1), 'r')
     %remove "-1" this is a targ absent place holder.
     tOnsets_smry = tOnsets_smry(tOnsets_smry>0);
     tOnsets_Hit_smry = tOnsets_Hit_smry(tOnsets_Hit_smry>0);
@@ -62,12 +77,7 @@ for ippant=3%1:length(pfols)
     
     nTrials = size(HeadY,1);
     nTargs = length(tOnsets_smry);
-    % plot
-    figure(1);clf;
-    set(gcf, 'units' ,'normalized', 'position', [0 0 .5 .5]);
-    plot(time_ax,mean(HeadY), 'color', 'k', 'linew', 3)
-    ylabel('Head height')
-    title(['Grand mean, nWalk(' num2str(nTrials) '), nTargs(' num2str(nTargs) ') -' ppant])
+   
     
     yyaxis right
     %     hg=histogram(tOnsets_smry, 100);

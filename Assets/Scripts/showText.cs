@@ -32,10 +32,11 @@ public class showText : MonoBehaviour
              thestring = "Welcome! \n When the central disc is green: Left click to start Trial \n\n" +
                 " Watch for brief flashes." +
                 "If you perceive '1' flash, click Left; \n\n" + 
-                "If you perceive '2' flashes, click Right.";
+                "If you perceive '2' flashes, click Right. \n\n" + 
+                "Let's practice standing still...";
         }else if (text2show == 2)
         {
-            thestring = "Well done! \n Now, your task is the same, but must be completed while walking." +
+            thestring = "Well done! \n Now, your task is the same, but must be completed while walking. " +
                   "Align your back to the edge of the room. \n\n When ready, pull the <left> Trigger to begin. Get ready to follow the arrow!";
 
         }

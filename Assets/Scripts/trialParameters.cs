@@ -19,12 +19,7 @@ public class trialParameters : MonoBehaviour
     private float nUniqueConditions;
     private int trialsperCondition;
     public int[] trialTypeArray;
-    //private float startBuffer_sec = 1f; // hard minimum before walk START that targ can appear.
-    //private float end_Buffer_sec = 1f; // hard minimum before walk duration END that targ can appear.
-    //public float[] targ1rangelims = { 0.6f, 1.2f }; // targ 1 can appear in here, relative to walk Onset.
-    //public float[] targ2rangelims = { 1.8f, 2.4f }; // targ 2 can appear in here, relative to walk Onset.
-    //public float[] targ3rangelims = { 3f, 3.6f };
-    //public float[] targ4rangelims = { 4.2f, 4.4f }; // short window at end with enough time for response.
+    
     public float[] targRange;
     private int[] targsPresented; // 0,4,or 8 for the A19 walk space, set per trial.
 

@@ -8,8 +8,6 @@ Fs=90;
 pfols = dir([pwd filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
-
-% nPractrials=[20,20,40,40]; %?
 %%
 % threshold between peaks for detection
 pkdist = Fs/2.5; % 400ms.
@@ -18,8 +16,8 @@ pkheight = 0.0002; % (m)
 
 figure(1); clf;
 set(gcf, 'units', 'normalized', 'position', [0,0, .9, .9], 'color', 'w', 'visible', 'off');
-
-for ippant = 3%1:nsubs
+%%
+for ippant =1:nsubs
     cd([datadir filesep 'ProcessedData'])
    
 %     pkdist = participantstepwidths(ippant);
@@ -28,6 +26,8 @@ for ippant = 3%1:nsubs
     savename = pfols(ippant).name;
     disp(['Preparing j1 ' subjID]);
     
+    % adjust step size for diff participants.
+    
     %% visualize the peaks and troughs in the head (Y) position.
     %Head position on Y axis, smooth to remove erroneous peaks.
    
@@ -35,7 +35,15 @@ for ippant = 3%1:nsubs
     figcount=1; %figure counter.
     %% Note that for nPractice trials, there won't be peaks and troughs, as the ppant was stationary.
     for  itrial=1:size(HeadPos,2)
+        %% subj GS had baby steps on some trials.
+        if strcmp(subjID,  'GS01_2021-11-16-12-59') && itrial==105
+            pkdist = 15;
+        else
+            pkdist = Fs/2.5; % 400ms.
+
+        end
         
+    
         %trial data:
         trialtmp = HeadPos(itrial).Y;
         trialD_sm = smooth(trialtmp, 5); % small smoothing factor.
@@ -198,6 +206,7 @@ for ippant = 3%1:nsubs
             end % if more troughs than peaks.
             
             if length(locs_trtr) ~= length(locs_ptr)+1
+                   subplot(5,3,pcount);
                 plot(Timevec, trialD);
             hold on;
             plot(Timevec(locs_ptr), trialD(locs_ptr), ['or']);
@@ -251,6 +260,9 @@ for ippant = 3%1:nsubs
             end
         end
         %
+        if itrial==105
+            pause(.1)
+        end
     end %itrial.
     %%
     

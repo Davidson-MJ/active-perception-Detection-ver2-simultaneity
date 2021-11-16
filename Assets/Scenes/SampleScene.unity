@@ -9233,7 +9233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1ee09535d8d81438bf87e9b2bbfcd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  participant: matt01
+  participant: GS01
   TrialCount: 0
   TrialType: 0
   targCount: 0
@@ -9337,6 +9337,7 @@ MonoBehaviour:
   targetColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   targetDuration: 0
   targetAlpha: 0.2
+  targetContrast: 0
 --- !u!114 &1896417870
 MonoBehaviour:
   m_ObjectHideFlags: 0

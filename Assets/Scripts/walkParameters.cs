@@ -51,7 +51,7 @@ public class walkParameters : MonoBehaviour
     {
         //rw params:
         //trialDuration = 120f;
-        reachHeight = 1.3f;
+        reachHeight = 1.55f;
        
        // walkingSpeed = 0.7f; 
         walkDuration = 9f;// 

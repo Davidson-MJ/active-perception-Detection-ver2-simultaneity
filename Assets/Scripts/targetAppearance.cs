@@ -199,7 +199,7 @@ public class targetAppearance : MonoBehaviour
 
                         /// we will also jitter the second flash ( so contrast isn't repeated).
                         float jit = Random.Range(-0.025f, 0.025f);
-                        ppantStaircase.targetColor = new  Color(ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetAlpha);
+                        ppantStaircase.targetColor = new Color(ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetColor[1] + jit, ppantStaircase.targetAlpha);
 
                         // wait gap dur, then present another target.
                         yield return new WaitForSeconds(ppantStaircase.targetGap);

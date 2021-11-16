@@ -37,7 +37,7 @@ public class Staircase : MonoBehaviour
         //float stepSize = .01f; // needs to be pilotted
         //int nCorrReverse = 2; // adjust the contrast values if 2 correct in a row (increase difficulty).
         //int nErrReverse = 1;  // adjust the contrast values if 1 error (decrease difficulty)
-        stepSize = .01f; //  in sec
+        stepSize = .005f; //  in sec
         callCount = 0;
         reverseCount = 0;
         corrInrow = 0;
@@ -74,7 +74,7 @@ public class Staircase : MonoBehaviour
         callCount++;
         // work through options:
         // correct detects first (staircase isn't updated after correct rejections).
-        if (reverseCount == 7)
+        if (reverseCount == 5)
         {
             //print("reducing step size");
             stepSize = stepSize /2;
@@ -96,10 +96,10 @@ public class Staircase : MonoBehaviour
                 targetTestgapDuration = prvTargGap - stepSize;
                 corrInrow++;
 
-                if (targetTestgapDuration <= stepSize)
+                if (targetTestgapDuration < 0)
                 {
                     targetTestgapDuration = stepSize; //avoid overshooting.
-                    
+                    stepSize = stepSize / 2;
                 }
 
             }  else
