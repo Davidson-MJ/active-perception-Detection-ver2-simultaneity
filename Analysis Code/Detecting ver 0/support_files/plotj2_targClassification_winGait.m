@@ -1,4 +1,5 @@
-% plotj2_targClassification_winGait
+% plotj2_targClassification_winGait - %discrimination version (1 or 2
+% flashes)
 
 % loads the ppant data collated in j2_binData_bycycle.
 
@@ -10,7 +11,7 @@ pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
 
 % how many gaits to plot?
-nGaits_toPlot=1; % 1 or 2.
+nGaits_toPlot=2; % 1 or 2.
 
 job.concat_GFX=0;
 job.basicPermtest =1; %create null distribution for quick plot:
@@ -28,6 +29,7 @@ job.plotGFX_targBinned=1; % note also calls on the results of basicPermtest.
 %data wrangling first: Concat, and create null distribution.
 
 gaittypes = {'single gait' , 'double gait'};
+titles={'Single flash', 'Double flash'};
 %%
 if job.concat_GFX
     dataIN=[];
@@ -219,7 +221,6 @@ if job.plot_targDistribution==1
         %% figure:
         figure(1); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
         
-        titles={'Single flash', 'Double flash'};
         for itarg = 1:2
             switch itarg
                 case 1 % single flashes presented
