@@ -10,7 +10,7 @@ nsubs= length(pfols);
 %%
 job.concatPFX=1;
 job.plotPFX=1;
-job.plotGFX=1;
+job.plotGFX=0;
 
 if job.concatPFX
    
@@ -45,12 +45,13 @@ if job.concatPFX
 end
 %%
 if job.plotPFX
-    
+    %%
     if ~exist('GFX_calibAcc', 'var')
          cd([datadir filesep 'ProcessedData' filesep 'GFX']) 
          load('GFX_calibration&Accuracy_comparison');
     end
-for ippant = 1:nsubs
+    %%
+for ippant = 5%1:nsubs
     cd([datadir filesep 'ProcessedData'])    %%load data from import job.
     load(pfols(ippant).name, 'calibData', 'calibAcc', 'calibGap');
     

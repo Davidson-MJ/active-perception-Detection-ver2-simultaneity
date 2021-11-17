@@ -74,7 +74,7 @@ public class Staircase : MonoBehaviour
         callCount++;
         // work through options:
         // correct detects first (staircase isn't updated after correct rejections).
-        if (reverseCount == 5)
+        if (reverseCount == 5 && numError < 10) // reduce step size only once.
         {
             //print("reducing step size");
             stepSize = stepSize /2;
@@ -99,7 +99,7 @@ public class Staircase : MonoBehaviour
                 if (targetTestgapDuration < 0)
                 {
                     targetTestgapDuration = stepSize; //avoid overshooting.
-                    stepSize = stepSize / 2;
+                    //stepSize = stepSize / 2;
                 }
 
             }  else

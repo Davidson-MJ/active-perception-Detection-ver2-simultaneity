@@ -1,17 +1,18 @@
+%DISCRIMINATION experiment (1 or 2 flashes)
 %%  Import from csv. FramebyFrame, then summary data.
 
 %frame by frame first:
 
 % datadir= 'C:\Users\vrlab\Documents\Matt\Projects\Output\walking_Ver1_Detect';
-datadir= '/Users/matthewdavidson/Documents/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data';
-% datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
+% datadir= '/Users/matthewdavidson/Documents/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data';
+datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
 
 cd(datadir);
 
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
-for ippant = 1:nsubs
+for ippant = 5%1:nsubs
     
    cd(datadir)
    

@@ -1,4 +1,4 @@
-% j3_binDist_bycycle
+% j3_binDist_bycycle - discim version (1 or 2 flash).
 %
 % here we will bin trial information into consecutive (2) gait cycles.
 
@@ -18,7 +18,7 @@ nsubs= length(pfols);
 
 resampSize = 200; % resample the gait cycle (DUAL CYCLE) to this many samps.
 %%
-for ippant = 5%1:nsubs
+for ippant = 1:nsubs
 cd([datadir filesep 'ProcessedData'])    %%load data from import job.
 
 load(pfols(ippant).name)

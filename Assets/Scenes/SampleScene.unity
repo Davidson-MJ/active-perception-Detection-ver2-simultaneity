@@ -9233,7 +9233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1ee09535d8d81438bf87e9b2bbfcd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  participant: GS01
+  participant: md02
   TrialCount: 0
   TrialType: 0
   targCount: 0

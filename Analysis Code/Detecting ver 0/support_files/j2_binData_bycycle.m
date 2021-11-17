@@ -23,7 +23,6 @@ for ippant = 1:nsubs
     
    
     Data_perTrialpergait =[];
-    % adjust summary data, to make sure it matches
    
  
     for itrial=1:size(HeadPos,2)
@@ -179,6 +178,7 @@ for ippant = 1:nsubs
         if HeadPos(itrial).isPrac
             continue
         end
+        
        tmp=trial_TargetSummary(itrial).gaitTarg; % nGaits
        nGaits = size(tmp,1);
        allgaits = 1:nGaits;
