@@ -13,7 +13,7 @@ nsubs= length(pfols);
 nGaits_toPlot=2; % 1 or 2.
 
 job.concat_GFX=0;
-job.basicPermtest =1; %create null distribution for quick plot:
+job.basicPermtest =0; %create null distribution for quick plot:
 
 job.plot_targDistribution=0; % plot the incidence of all targs (correct, incorrect, and missed)
 job.plot_targBinned=0; % single GC, binning into 7 regions to show proportion accuracy.
@@ -21,7 +21,7 @@ job.plot_targBinned=0; % single GC, binning into 7 regions to show proportion ac
 %%%%
 job.plotGFX_targBinned=1; % note also calls on the results of basicPermtest.
 
-job.plotGFX_targBinned_norm=0; % note also calls on the results of basicPermtest.
+job.plotGFX_targBinned_norm=1; % note also calls on the results of basicPermtest.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,8 +98,9 @@ if job.concat_GFX
                     use1cor= PFX_tHits_2flash_doubleGC;
                 use1err = PFX_tMiss_2flash_doubleGC;
                 elseif iTarg==3
-                     use1cor = [PFX_tHits_1flash_doubleGC; PFX_tHits_2flash_doubleGC];                    
-                    use1err = [PFX_tMiss_1flash_doubleGC; PFX_tMiss_2flash_doubleGC];
+                    elseif iTarg==3 % combined!
+                    use1cor = [PFX_tHits_1flash; PFX_tHits_2flash];                    
+                    use1err = [PFX_tMiss_1flash; PFX_tMiss_2flash];
                 end
                 
             end
@@ -155,7 +156,7 @@ if job.basicPermtest
             
         end
         
-        for iTarg=1:3
+        for iTarg=1:2
             for iperm=1:1000
             tmpProp=[];
              tmpProp_n=[];
@@ -165,27 +166,18 @@ if job.basicPermtest
                     if iTarg==1
                         tmpC= GFX_data(1,ippant).gc; % 1 corr.
                         tmpErr= GFX_data(3,ippant).gc; % 1 err.
-                    elseif iTarg==2
+                    else
                         tmpC= GFX_data(2,ippant).gc; % 2 corr.
                         tmpErr= GFX_data(4,ippant).gc; % 2 err.
-                    elseif iTarg==3% combined
-                        tmpC= [GFX_data(1,ippant).gc; GFX_data(2,ippant).gc];
-                        
-                        tmpE= [GFX_data(3,ippant).gc; GFX_data(4,ippant).gc];
                     end
                         
                 else
                     if iTarg==1
                         tmpC= GFX_data(1,ippant).doubgc; % 1 corr.
                         tmpErr= GFX_data(3,ippant).doubgc; % 1 err.
-                    elseif iTarg==2
+                    else
                         tmpC= GFX_data(2,ippant).doubgc; % 2 corr.
                         tmpErr= GFX_data(4,ippant).doubgc; % 2 err.
-                    
-                    elseif iTarg==3% combined
-                        tmpC= [GFX_data(1,ippant).doubgc; GFX_data(2,ippant).doubgc];
-                        
-                        tmpE= [GFX_data(3,ippant).doubgc; GFX_data(4,ippant).doubgc];
                     end
                         
                 end
@@ -219,9 +211,9 @@ if job.basicPermtest
         [shufftoPlot, shufftoPlot_norm]= deal(zeros(3,2,size(permDataOUT,2))); % [lower,med,upper], targs, bins
           
         
-        for iTarg=1:3
+        for iTarg=1:2
         %% now save both.
-            for ibin = 1:size(permDataOUT,3)
+            for ibin = 1:size(permDataOUT,2)
                 %
                 datadist= squeeze(permDataOUT(:,iTarg,ibin));
                 shufftoPlot(:,iTarg,ibin) = quantile(datadist, [.05, .5, .95]);
@@ -382,13 +374,12 @@ if job.plotGFX_targBinned==1 % concats and then plots.
     
     figure(2); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
     
- titles={'Single Flash', 'Double Flash', 'Discrimination'};
+ 
         %extract data into matrix:
         [pD, pH]= deal([]);
           ylimsU(1,:)= [.76 .95];          
           ylimsU(2,:)= [.55 .75];
-          ylimsU(3,:)= [.65 .85];
-        for iTarg=3%1:2
+        for iTarg=1:2
             
         if nGaits_toPlot==1
             for ip=1:size(GFX_allbinned_Accuracy,2)
@@ -410,7 +401,7 @@ if job.plotGFX_targBinned==1 % concats and then plots.
             shufftoplot = shuffData_toplot.doubgc;
         end
               % plot mean head pos
-% subplot(1,2,iTarg)
+subplot(1,2,iTarg)
 yyaxis right
 plot(nanmean(pH), ['k-o']); hold on
       set(gca, 'ytick',[])
@@ -449,86 +440,3 @@ yyaxis left
     
 end
 
-%% %%
-
-if job.plotGFX_targBinned_norm==1 % concats and then plots.
-    %%
-    
-    figure(2); clf; set(gcf, 'color', 'w', 'units', 'normalized', 'position', [0 0 .9  .9]);
-    
-    
-        %extract data into matrix:
-        [pD, pH]= deal([]);
-        for iTarg=3
-        if nGaits_toPlot==1
-            for ip=1:size(GFX_allbinned_Accuracy,2)
-                pD(ip,:) = GFX_allbinned_Accuracy(iTarg, ip).gc ./ (mean( GFX_allbinned_Accuracy( ip).gc));
-                pH(ip,:) = GFX_headY(ip).gc;
-            end
-            pidx= pidx1;
-            
-            shufftoplot = shuffData_toplot.gc_n;
-        else
-            for ip=1:size(GFX_allbinned_Accuracy,2)
-                pD(ip,:) =  GFX_allbinned_Accuracy( iTarg,ip).doubgc ./ (mean( GFX_allbinned_Accuracy( ip).doubgc));
-                pH(ip,:) = GFX_headY(ip).doubgc;
-            end
-            pidx= pidx2;
-            
-            shufftoplot = shuffData_toplot.doubgc_n;
-        end
-        %% plot mean accuracy.
-        clf
-%         subplot(211); % headpos        
-        plot(nanmean(pH), ['k-o']); hold on
-        set(gca, 'ytick', [], 'xtick', [], 'fontsize', 15)
-        axis off ; box off
-        %
-        % normalized per ppant
-%         for ip
-% subplot(212);
-yyaxis right
-mPD= mean(pD,1);
-        plot(pidx(1:end-1), mean(pD,1), 'bo', 'linew', 4);
-       
-%         stE= CousineauSEM(pD);
-        hold on;
-        axis off;
-        
-        %%
-%         errorbar(pidx(1:end-1), mean(pD,1), stE, 'linestyle', 'none');
-%         ylim([.5 1])
-        ylabel('Accuracy')
-%         title('Target detection')
-        
-%         %%
-        % plot shuff likelihood for comp.
-%         upB = plot(pidx(1:end-1), squeeze(shufftoplot(1,:))', ['k:']);
-%         medB = plot(pidx(1:end-1), squeeze(shufftoplot(2,:)), ['k-']);
-%         lowB = plot(pidx(1:end-1), squeeze(shufftoplot(3,:)), ['k:']);
-        rangep = squeeze(shufftoplot(3,iTarg,:)) - squeeze(shufftoplot(1,iTarg,:));
-        %%
-        mShuff= squeeze(shufftoplot(2,iTarg,:))+.02;
-        shadedErrorBar(pidx(1:end-1),mShuff , rangep/2,[],1)
-        %%
-         hold on
-        for ip= 1:length(pD)
-        plot([pidx(ip) pidx(ip) ], [mShuff(ip) mPD(ip)], ['b:'], 'linew',3)
-        end
-        %%
-        ylim([.94 1.08])
-        
-        end
-    %%
-    cd([datadir filesep  'Figures' filesep 'TargClass_withinGait'])
-%     print(['GFX targs within ' gaittypes{nGaits_toPlot} ', proportion binned'], '-dpng');
-%%
-figure(2);
-
-clf; histogram(permDataOUT(:,1), 100, 'FaceColor', [.2 .2 .2]);
-box off
-axis off
-axis xy
-shg
-% hg.FaceColor= [.3 .3 .3];
-end

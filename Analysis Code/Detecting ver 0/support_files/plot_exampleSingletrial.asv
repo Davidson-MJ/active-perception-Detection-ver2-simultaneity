@@ -1,0 +1,50 @@
+% plot_exampleSingletrial
+
+
+
+cd([datadir filesep 'ProcessedData'])
+Fs=90;
+pfols = dir([pwd filesep '*summary_data.mat']);
+nsubs= length(pfols);
+
+ippant=4;
+itrial= 51;
+
+figure(1); clf;
+set(gcf, 'units', 'normalized', 'position', [0,0, .9, .9], 'color', 'w', 'visible', 'off');
+%%
+cd([datadir filesep 'ProcessedData'])
+
+%
+load(pfols(ippant).name);
+%% trial data:
+clf
+trialD = squeeze(HeadPos(itrial).Y);
+trialTarg = TargState(itrial).state;
+trialClick = clickState(itrial).state;
+loc_pks = HeadPos(itrial).Y_gait_peaks;
+
+loc_troughs = HeadPos(itrial).Y_gait_troughs;
+clf
+Timevec = HeadPos(itrial).times;
+
+plot(Timevec, trialD, 'k', 'linew', 3);
+hold on;
+ylabel('Head height');
+xlabel('Time (s)');
+set(gca, 'fontsize', 25);
+box off
+%
+plot(Timevec(loc_pks), trialD(loc_pks), ['or'], 'markersize', 20, 'linew', 2);
+plot(Timevec(loc_troughs), trialD(loc_troughs), ['ob'], 'markersize', 20, 'linew', 2)
+% add targ and response info:
+%
+yyaxis right
+tt=plot(Timevec, trialTarg, 'b', 'linew',2);
+tr=plot(Timevec, trialClick, 'r', 'linew', 2);
+% ylabel('targ-click');
+ylabel('')
+set(gca,'ytick', [])
+shg
+
+legend([tt, tr], {'onset', 'response'})
