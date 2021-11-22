@@ -7,6 +7,8 @@
 % gaits.
 
 %% SIMULTANEITY
+
+datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Discrim ver 0\Raw_data';
 cd([datadir filesep 'ProcessedData']);
 pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
@@ -23,10 +25,8 @@ for ippant = 1:nsubs
     % Per trial, extract gait samples (trough to trough), normalize along x
     % axis, and store various metrics.
     
-   
-    Data_perTrialpergait =[];
-   
- 
+   gaitRTs=[];
+   rtcounter=1;
     for itrial=1:size(HeadPos,2)
         if HeadPos(itrial).isPrac
             continue
@@ -101,15 +101,22 @@ for ippant = 1:nsubs
                if ~isnan(respWasCorrect)
                    if respWasCorrect
                        targRespClass = targTypewas;
+
                    else 
                        targRespClass = targTypewas+2;
                    end
                else 
                    targRespClass= 0;
                end
-               %store
-               
-               
+              
+              %also collect RT info                
+                %note NaN on end is updated below (with response position
+                %in Gait).
+                gaitRTs(rtcounter,:,:,:,:) = [gPcnt, time_Response, targRespClass,NaN] ;
+                rtcounter=rtcounter+1;
+                
+                
+                %store rest
                gaitD(igait).tOnset_inTrialidnx = tOns;
                gaitD(igait).tOnset_inGait = tO;
                gaitD(igait).tOnset_inGaitResampled = gPcnt;
@@ -148,6 +155,33 @@ for ippant = 1:nsubs
             
             gaitD(igait).risespeed = risespeed;
             gaitD(igait).fallspeed = fallspeed;
+            
+            
+            %% also append RT pcnt per gait:
+             % per gait, also grab when the click occured relevant to Gait 
+             % pcnt:
+             gaitClick = tmpClick(gaitsamps);
+             tR=  find(gaitClick==1);
+             
+             if ~isempty(tR) % target Onset occurred:
+                 for iresp=1:length(tR)
+                     tRi= tR(iresp);
+                     rPcnt = round((tRi/length(gaitsamps))*100);
+                     % find the corresponding target (onset), and append the RT
+                     % pcnt of gait, to the gaitRT information:
+                     time_response = avTime(itrial, gaitsamps(tRi));
+                     % find the index of this RT (to find the target).
+                     
+                     rtIDX_insummary = dsearchn([tClickOns_smry], [time_response]');
+                     % what was the recorded RT, associated with this click onset?
+                     searchRT =  tRTs_sumry(rtIDX_insummary);
+                     % now find this 'row' in the rt information.
+                     userow = find(gaitRTs(:,2)==searchRT); % 3rd col is rt
+                     % append the rPcnt to the correct target onset:
+                     gaitRTs(max(userow),4) = rPcnt;
+                 end
+                 
+             end
             
             
             
@@ -234,6 +268,7 @@ for ippant = 1:nsubs
        'PFX_tHits_1flash',...
         'PFX_tHits_2flash',...
          'PFX_tMiss_1flash', ...
-        'PFX_tMiss_2flash', 'PFX_tNoresp','-append');
+        'PFX_tMiss_2flash', 'PFX_tNoresp',...
+        'gaitRTs','-append');
 end % subject
 

@@ -13,6 +13,8 @@
 % clear all; close all;
 %% %%%% %% SIMULTANEITY
 
+datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Discrim ver 0\Raw_data';
+
 cd([datadir filesep 'ProcessedData'])
 pfols= dir([pwd  filesep '*summary_data.mat']);
 nsubs= length(pfols);
@@ -35,7 +37,7 @@ disp(['Preparing j3 linked GCs ' savename]);
     Data_perTrialpergait_doubleGC =[];
     
     rtcounter=1;
-    gaitRTs= []; % will be gPcnt , RT, H/M
+    gaitRTs_doubGC= []; % will be gPcnt , RT, H/M
 
 for itrial=1:size(HeadPos,2)
     if HeadPos(itrial).isPrac
@@ -146,12 +148,12 @@ for itrial=1:size(HeadPos,2)
                        % 1 or 2
                    gaitTarg_classvector(gPcnt) = targTypewas_all(itarg);
                    % add RT information as well.
-                   gaitRTs(rtcounter,:,:,:) = [gPcnt,  time_Response_all(itarg), targTypewas_all(itarg)] ;
+                   gaitRTs_doubGC(rtcounter,:,:,:) = [gPcnt,  time_Response_all(itarg), targTypewas_all(itarg), NaN] ;
                     rtcounter=rtcounter+1;
                    else 
                        %3 or 4
                    gaitTarg_classvector(gPcnt) = targTypewas_all(itarg)+2;
-                   gaitRTs(rtcounter,:,:,:) = [gPcnt,  time_Response_all(itarg), targTypewas_all(itarg)+2] ;
+                   gaitRTs_doubGC(rtcounter,:,:,:) = [gPcnt,  time_Response_all(itarg), targTypewas_all(itarg)+2, NaN] ;
                    rtcounter=rtcounter+1;
                    end
                else 
@@ -190,7 +192,30 @@ for itrial=1:size(HeadPos,2)
             gaitD(igait).gaitsamps = gaitsamps;
            
             
+               % per gait, also grab when the click occured relevant to Gait 
+             % pcnt:
+             gaitClick = tmpClick(gaitsamps);
+             tR=  find(gaitClick==1);
             
+            if ~isempty(tR) % target Onset occurred:
+                for iresp=1:length(tR)
+                    tRi= tR(iresp);
+                    rPcnt = round((tRi/length(gaitsamps))*200);
+                    % find the corresponding target (onset), and append the RT
+                    % pcnt of gait, to the gaitRT information:
+                    time_response = avTime(itrial, gaitsamps(tRi));
+                    % find the index of this RT (to find the target).
+                    
+                    rtIDX_insummary = dsearchn([tClickOns_smry], [time_response]');
+                    % what was the recorded RT, associated with this click onset?
+                    searchRT =  tRTs_sumry(rtIDX_insummary);
+                    % now find this 'row' in the rt information.
+                    userow = find(gaitRTs_doubGC(:,2)==searchRT); % 3rd col is rt
+                    % append the rPcnt to the correct target onset:
+                    gaitRTs_doubGC(max(userow),4) = rPcnt;
+                end
+              
+            end
             
         end % gait in trial.
         % also store matrix data at the trial level:
@@ -284,6 +309,6 @@ end %trial
         'PFX_tHits_2flash_doubleGC',...
          'PFX_tMiss_1flash_doubleGC', ...
         'PFX_tMiss_2flash_doubleGC', 'PFX_tNoresp_doubleGC',...
-        'gaitRTs','-append');
+        'gaitRTs_doubGC','-append');
 end % subject
 
