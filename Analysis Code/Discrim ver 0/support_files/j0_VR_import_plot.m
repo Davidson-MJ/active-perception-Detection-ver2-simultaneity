@@ -7,9 +7,9 @@
 % datadir= '/Users/matthewdavidson/Documents/GitHub/active-perception-Detection-ver2-simultaneity/Analysis Code/Detecting ver 0/Raw_data';
 % PC
 datadir= 'C:\Users\User\Documents\matt\GitHub\active-perception-Detection-ver2-simultaneity\Analysis Code\Detecting ver 0\Raw_data';
-
+%%
 cd(datadir);
-
+%%
 pfols = dir([pwd filesep '*framebyframe.csv']);
 nsubs= length(pfols);
 %% Per csv file, import and wrangle into Matlab Structures, and data matrices:
